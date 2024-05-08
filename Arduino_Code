@@ -1,12 +1,13 @@
 /*
    Простой пример, демонстрирующий основные функции измерения температуры, давления и влажности
 */
+
 #include <Wire.h>
 #include <WiFi.h>
 #include "time.h"
 #include "sntp.h"
+#include "DHT.h"
 #include <Adafruit_BMP280.h>
-// #include <GyverBME280.h>
 #include "GyverBME280.h"
 #include <PubSubClient.h>  
 #ifndef ARDUINOJSON_H
@@ -17,15 +18,26 @@ PubSubClient client(espClient);
 
 GyverBME280 bme; 
 Adafruit_BMP280 bmp;
-#define light 2
+#define light_pin 2
+#define photo_sensor_pin 34
+#define pump_pin 17
+#define moisture_pin 33
 #define cooling_element 12
 #define heating_element 13
-#define sensor_pin 34
-float temperature,pressure;
-float target_temp = 2.2;
-int sensor;
-const int threshold = 500;
+#define DHTPIN 32
+#define DHTTYPE DHT22 
+DHT dht(DHTPIN, DHTTYPE);
 
+float temperature, pressure, Altitude, humidity, DHTTemp, H_Index, moisture;
+float target_temp = 2.2;
+int light_intensity;
+const int light_threshold = 500, soil_threshold = 50;
+const int WaterValue = 980; //Analogue reading when sensor is wet
+const int AirValue = 2700; //Analogue Reading when sensor is dry
+char* cooling_status;
+char* heating_status;
+char* pump_status;
+char* light_status;
 
 int Timestamp = 0;
 
@@ -51,11 +63,8 @@ void callback(char* topic, byte* message, unsigned int length);
 void transmit();
 void cooling();
 void heating();
-void Light();
-
-
-
-
+void lighting();
+void watering();
 
 void printLocalTime()
 {
@@ -67,34 +76,33 @@ void printLocalTime()
   Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
 }
 
-unsigned long getTime(){
+unsigned long getTime()
+{
 // RETURNS TIMESTAMP FOR CURRENT TIME FROM NTP SERVER
-    time_t now;
-    struct tm timeinfo;
+  time_t now;
+  struct tm timeinfo;
 
-    // get time from ntp server first and save to system
-    if (!getLocalTime(&timeinfo)) {
-      log_d("%s","Failed to obtain time, NTP");
-      return(0);
-    }
-
-    // Retrieve time[Timestamp] from system and save to &now variable
-    time(&now); 
-    return now;  
+  // get time from ntp server first and save to system
+  if (!getLocalTime(&timeinfo)) {
+    log_d("%s","Failed to obtain time, NTP");
+    return(0);
   }
 
+  // Retrieve time[Timestamp] from system and save to &now variable
+  time(&now); 
+  return now;  
+}
 
-
-
-int TimeStamp(void){
-      // RETURNS TIMESTAMP FOR CURRENT TIME
-      time_t now;
-      
-      // Retrieve time[Timestamp] from system and save to &now variable
-      time(&now);
-      Timestamp = (int)now;
-      return now;
-      }
+int TimeStamp(void)
+{
+  // RETURNS TIMESTAMP FOR CURRENT TIME
+  time_t now;
+  
+  // Retrieve time[Timestamp] from system and save to &now variable
+  time(&now);
+  Timestamp = (int)now;
+  return now;
+}
 
 // Callback function (get's called when time adjusts via NTP)
 void timeavailable(struct timeval *t)
@@ -103,6 +111,7 @@ void timeavailable(struct timeval *t)
   Serial.println("***SYNCHRONIZED***");
   printLocalTime();
 }
+
 void setup_wifi() {
   vTaskDelay(10 / portTICK_PERIOD_MS); // delay 10 ms
 
@@ -138,7 +147,6 @@ void reconnect() {
   }
 }
 
-
 void callback(char* topic, byte* message, unsigned int length) { 
   
   char received[1000] = {0};    
@@ -155,31 +163,32 @@ void callback(char* topic, byte* message, unsigned int length) {
   DynamicJsonDocument doc(50);
   deserializeJson(doc, received);
 
-
   const char* sensor = doc["sensor"];
   const char* data = doc["message"];
   Serial.println(sensor);
     String action = String(sensor);
-   
-    
-
 
   }
  
 
 
 void setup() {
-  pinMode(light,OUTPUT);
-  pinMode(sensor_pin,INPUT);
+  pinMode(light_pin,OUTPUT);
+  pinMode(cooling_element,OUTPUT);
+  pinMode(heating_element,OUTPUT);
+  pinMode(photo_sensor_pin,INPUT);
+  pinMode(pump_pin,OUTPUT);
+  pinMode(moisture_pin,INPUT);
   Wire.begin();        // join i2c bus (address optional for master)
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
   Serial.begin(115200);  
-
-
   bme.begin(); 
 
+  Serial.println(F("DHTxx test!"));
+
+  dht.begin();
     // set notification call-back function
   sntp_set_time_sync_notification_cb( timeavailable );
 
@@ -206,30 +215,19 @@ void setup() {
    * A list of rules for your zone could be obtained from https://github.com/esp8266/Arduino/blob/master/cores/esp8266/TZ.h
    */
   //configTzTime(time_zone, ntpServer1, ntpServer2);
-
-  // //connect to WiFi
-  // Serial.printf("Connecting to %s ", ssid);
-  // WiFi.begin(ssid, password);
-  // while (WiFi.status() != WL_CONNECTED) {
-  //     delay(500);
-  //     Serial.print(".");
-  // }
-  // Serial.println(" CONNECTED");
   getTime();
 
   if (!bmp.begin(0x76)) {
     Serial.println(F("Could not find a valid BMP280 sensor, check wiring or try a different address!"));
     while (1) delay(10);
   }
-
-  pinMode(cooling_element,OUTPUT);
-
 }
 
 void heating()
 {
   if (temperature < target_temp)
   {
+    heating_status = "ON";
     digitalWrite(heating_element,HIGH);
     Serial.println("heating ON");
   }
@@ -237,6 +235,7 @@ void heating()
   {
     digitalWrite(heating_element,LOW);
     Serial.println("Heating OFF");
+    heating_status = "OFF";
   }
 }
 
@@ -244,6 +243,7 @@ void cooling()
 {
   if (temperature > target_temp)
   {
+    cooling_status = "ON";
     digitalWrite(cooling_element,HIGH);
     Serial.println("Cooling ON");
   }
@@ -251,25 +251,46 @@ void cooling()
   {
     digitalWrite(cooling_element,LOW);
     Serial.println("Cooling OFF");
+    cooling_status = "OFF";
   }
 }
 
-void Light()
+void lighting()
 {
-  sensor = analogRead(sensor_pin);
+  light_intensity = analogRead(photo_sensor_pin);
   Serial.print("LDR = ");
-  Serial.println(sensor);
+  Serial.println(light_intensity);
   delay(500);
-  if (sensor < threshold)
+  if (light_intensity < light_threshold)
   {
-    digitalWrite(light,HIGH);
+    digitalWrite(light_pin,HIGH);
+    light_status = "ON";
   }
   else
   {
-    digitalWrite(light,LOW);
+    digitalWrite(light_pin,LOW);
+    light_status = "OFF";
   }
 }
 
+void watering()
+{
+  moisture = analogRead(moisture_pin);
+  moisture = map(moisture,AirValue,WaterValue,0,100);
+  Serial.print("Soil Moisture = ");
+  Serial.println(moisture);
+  delay(500);
+  if (moisture < soil_threshold)
+  {
+    digitalWrite(pump_pin,HIGH);
+    pump_status = "ON";
+  }
+  else
+  {
+    digitalWrite(pump_pin,LOW);
+    pump_status = "OFF";
+  }
+}
 
 void transmit()
 {
@@ -279,13 +300,17 @@ static int capacity  = JSON_OBJECT_SIZE(50);
   char message[300]       = {0};
   json["TYPE"]            = "SENSOR";
   json["ID"]              = IDNumber;
+  json["TIMESTAMP"]       = Timestamp;
   json["TEMPERATURE"]     = temperature;
-  // json["HEATINDEX"]       = H_Index;
-  // json["HUMID"]           = Hum; 
+  json["HEATINDEX"]       = H_Index;
+  json["HUMIDITY"]           = humidity; 
   json["PRESSURE"]        = pressure;
-  // json["ALTITUDE"]        = Altitude;
-  // json["SOINMOISTURE"]    = conv;
-  json["TIMESTAMP"] = Timestamp;
+  json["SOILMOISTURE"]    = moisture;
+  json["COOLINGSTATUS"]       = cooling_status;
+  json["HEATINGSTATUS"]           = heating_status; 
+  json["LIGHTSTATUS"]        = light_status;
+  json["PUMPSTATUS"]    = pump_status;
+  
 
   serializeJson(json,message);   
   json.clear(); 
@@ -298,41 +323,54 @@ static int capacity  = JSON_OBJECT_SIZE(50);
     client.publish(mqtt_PubTopic, message); 
   }
     
-
-  
   vTaskDelay(1000 / portTICK_PERIOD_MS); // delay 1 second 
-  
 }
 
-void loop() {
-
-  if (!client.connected()) {
+void loop() 
+{
+  if (!client.connected()) 
+  {
     reconnect();
   }
+  
   client.loop();
 
   // delay(5000);
   printLocalTime();     // it will take some time to sync time :)
   Serial.println(TimeStamp());
   delay(1000);
-  Serial.print("Temperature BME: ");
-  Serial.print(bme.readTemperature());        // Выводим темперутуру в [*C]
-  Serial.println(" °C");
-  Serial.print("Temperature BMP: ");
+
+  // Serial.print("Temperature BME: ");
+  // Serial.print(bme.readTemperature());        // Выводим темперутуру в [*C]
+  // Serial.println(" °C");
+
   temperature = bmp.readTemperature();
-  Serial.println(temperature);
+  Serial.print("Temperature BMP: ");
+  Serial.print(temperature);
   Serial.println(" °C");
+
   pressure = bmp.readPressure();
+  // Serial.print("BME  Altitide: ");
+  // Serial.print(pressureToAltitude(bme.readPressure())); // Выводим высоту в [м над ур. моря]
+  // Serial.println(" m");
 
-  Serial.print("BME  Altitide: ");
-  Serial.print(pressureToAltitude(bme.readPressure())); // Выводим высоту в [м над ур. моря]
-  Serial.println(" m");
+  humidity = dht.readHumidity();
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
 
-   
-  
+  DHTTemp = dht.readTemperature();
+  Serial.print("Temperature DHT: ");
+  Serial.print(DHTTemp);
+  Serial.println(" °C");
+
+  H_Index = dht.computeHeatIndex(DHTTemp, humidity, false);
+  Serial.print(H_Index);
+  Serial.println(" °C");
+
   cooling();
   heating();
-  Light();
+  lighting();
+  watering();
   transmit();
-  
 }
