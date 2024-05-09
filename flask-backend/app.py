@@ -14,6 +14,8 @@ from collections import defaultdict
 import paho.mqtt.client as mqtt
 import json
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+
 
 load_dotenv()  # LOAD .env FILES IN CURRENT FOLDER
 app = Flask(__name__)
@@ -42,10 +44,12 @@ def json_object():
 
 
 # MongoDB settings
+uri = "mongodb+srv://andre:r8ViFc2453NZPFBL@farmdata.gv5ejiy.mongodb.net/?retryWrites=true&w=majority&appName=FarmData"
 mongo_host = "localhost"
 mongo_port = 27017
 mongo_db = "GreenHouse"
 mongo_collection = "FarmData"
+
 
 # MQTT on_connect callback
 def on_connect(client, userdata, flags, rc):
@@ -61,7 +65,8 @@ def on_message(client, userdata, msg):
     print(data)
     
     # Connect to MongoDB
-    client = MongoClient(mongo_host, mongo_port)
+    # client = MongoClient(mongo_host, mongo_port) # for local host
+    client = MongoClient(uri, server_api=ServerApi('1')) # for cloud
     db = client[mongo_db]
     collection = db[mongo_collection]
     
