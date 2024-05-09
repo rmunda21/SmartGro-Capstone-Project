@@ -31,7 +31,7 @@ DHT dht(DHTPIN, DHTTYPE);
 float temperature, pressure, Altitude, humidity, DHTTemp, H_Index, moisture;
 float target_temp = 2.2;
 int light_intensity;
-const int light_threshold = 500, soil_threshold = 50;
+const int light_threshold = 700, soil_threshold = 50;
 const int WaterValue = 980; //Analogue reading when sensor is wet
 const int AirValue = 2700; //Analogue Reading when sensor is dry
 char* cooling_status;
@@ -39,7 +39,7 @@ char* heating_status;
 char* pump_status;
 char* light_status;
 
-int Timestamp = 0;
+int Timestamp = 0, previousTimestamp = 0;
 
 const char* ssid       = "ANDRE3379";
 const char* password   = "891z2N|6";
@@ -294,7 +294,7 @@ void watering()
 
 void transmit()
 {
-static int capacity  = JSON_OBJECT_SIZE(50); 
+  static int capacity  = JSON_OBJECT_SIZE(50); 
   DynamicJsonDocument json(capacity);
   
   char message[300]       = {0};
@@ -316,13 +316,13 @@ static int capacity  = JSON_OBJECT_SIZE(50);
   json.clear(); 
 
   Serial.println(message);
-  // client.publish(mqtt_PubTopic, message); 
   // PUBLISH MESSAGE
-  if(Timestamp >= 167701500)
+  if((Timestamp >= 167701500) && (Timestamp > previousTimestamp))
   {
+
     client.publish(mqtt_PubTopic, message); 
   }
-    
+  previousTimestamp = Timestamp;    
   vTaskDelay(1000 / portTICK_PERIOD_MS); // delay 1 second 
 }
 
