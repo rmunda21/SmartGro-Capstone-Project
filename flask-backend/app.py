@@ -1,10 +1,10 @@
 #Read from CSV file imports 
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 import random
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 
 # import plotly.graph_objects as go
 # import plotly.express as px
@@ -94,18 +94,18 @@ def json_object():
     return render_template('404.html'), 404
 
 # Read from CSV file
-cropdf = pd.read_csv("flask-backend\Crop_recommendation.csv")
-cropdf.head()
+# cropdf = pd.read_csv("flask-backend\Crop_recommendation.csv")
+# cropdf.head()
 # print(cropdf.shape)
 # print("Number of various crops: ", len(cropdf['label'].unique()))
 # print("List of crops: ", cropdf['label'].unique())
 
-crop_summary = pd.pivot_table(cropdf,index=['label'],aggfunc='mean')
-crop_summary.head()
+# crop_summary = pd.pivot_table(cropdf,index=['label'],aggfunc='mean')
+# crop_summary.head()
 # print(crop_summary)
 
 # Convert crop_summary to JSON
-crop_summary_json = crop_summary.to_json(orient='index')
+# crop_summary_json = crop_summary.to_json(orient='index')
 
 # # Write JSON to a file
 # with open('flask-backend\crop_summary.json', 'w') as file:
