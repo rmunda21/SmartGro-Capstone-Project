@@ -1,6 +1,6 @@
-import { Card } from "flowbite-react";
+import { Card } from 'flowbite-react'
 
-const MyReadingsCard = ({heading, desc, reading, image_src}) => {
+const SwitchCard = () => {
     return ( 
         <Card className="w-[350px] flex-grow">
            <h4 className="font-bold text-slate-600 text-sm">{heading}</h4>
@@ -12,5 +12,5 @@ const MyReadingsCard = ({heading, desc, reading, image_src}) => {
         </Card>
      );
 }
- 
-export default MyReadingsCard;
+
+export default SwitchCard;
