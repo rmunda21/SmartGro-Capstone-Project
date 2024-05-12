@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { APIEndpoint } from '@/utils/api';
 
 const SignInForm = () => {
 
@@ -38,6 +39,8 @@ const SignInForm = () => {
 
     const onSubmit = (data) => {
         console.log(data)
+        const loginAPI = new APIEndpoint()
+        loginAPI.post('login/', data)
     }
 
     return ( 
