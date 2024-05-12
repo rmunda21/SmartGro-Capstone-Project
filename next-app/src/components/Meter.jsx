@@ -37,7 +37,7 @@ const MeterGauge = ({ value }) => {
         width: 0.3,
       }}
       pointer={{
-        elastic: true,
+        elastic: false,
         animationDelay: 0,
       }}
       maxValue={500}
