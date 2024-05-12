@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { APIEndpoint } from '@/utils/api';
 
 const SignUpForm = () => {
 
@@ -45,6 +46,12 @@ const SignUpForm = () => {
     })
 
     const onSubmit = (data) => {
+        const registerAPI = new APIEndpoint()
+        registerAPI.post('register/', data)
+        .then((res)=>{
+            console.log(res)
+        })
+        .catch(err=>console.log(err))
         console.log(data)
     }
 
