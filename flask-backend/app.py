@@ -6,12 +6,14 @@ from flask import Flask, make_response, request
 from time import time, ctime, sleep
 from math import floor
 from datetime import datetime, timedelta
+from db import connect_to_mongodb
+from utils.auth import authenticate_user, register_user
 
 
 # from config import Config
 import os.path
 from collections import defaultdict
-import paho.mqtt.client as mqtt
+# import paho.mqtt.client as mqtt
 import json
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -20,10 +22,40 @@ import csv
 
 load_dotenv()  # LOAD .env FILES IN CURRENT FOLDER
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '6#uon)rmr-^+#7!gyon^#^hc^19vhs!6$)$s092mn+jfa_6*gd'
 
-@app.route('/api/login', methods=['POST'])
+
+@app.route('/api/register/', methods=['POST'])
+def register():
+    try:
+        form_data = request.form
+        username = form_data['username']
+        firstname = form_data['firstname']
+        lastname = form_data['lastname']
+        password = form_data['password']
+        user = register_user(username=username, password=password, firstname=firstname, lastname=lastname)
+        if user:
+            print("User added")
+        elif user == False:
+            print("User already exists")
+        else:
+            print("Error")
+        return make_response({'message': 'success'}, 200)
+    except Exception as e:
+        print("Test: ", e)
+        make_response({'message': "Error"}, 400)
+    
+
+@app.route('/api/login/', methods=['POST'])
 def login():
-    print(request.form['username'])
+    form_data = request.form
+    username = form_data['username']
+    password = form_data['password']
+    user = authenticate_user(username=username, password=password)
+    if user:
+        print("Logged In")
+    else:
+        print("Invalid")
     return make_response({'message': 'success'}, 200)
 
 # @app.route('/api/Test', methods=['POST'])
@@ -59,8 +91,8 @@ mongo_db = "GreenHouse"
 mongo_collection = "FarmData"
 
 # Connect to MongoDB
-client = MongoClient(uri, server_api=ServerApi('1')) # for cloud
-db = client[mongo_db]
+# client = MongoClient(uri, server_api=ServerApi('1')) # for cloud
+# db = client[mongo_db]
 
 
 # MQTT on_connect callback
@@ -80,6 +112,7 @@ def on_message(client, userdata, msg):
     # client = MongoClient(mongo_host, mongo_port) # for local host
     # client = MongoClient(uri, server_api=ServerApi('1')) # for cloud
     # db = client[mongo_db]
+    db = connect_to_mongodb()
     collection = db[mongo_collection]
     
     # Insert data into MongoDB
@@ -90,18 +123,18 @@ def on_message(client, userdata, msg):
   except Exception as e:
     print("Error:", str(e))
 
-# Create MQTT client
-client = mqtt.Client()
+# # Create MQTT client
+# client = mqtt.Client()
 
-# Set MQTT callbacks
-client.on_connect = on_connect
-client.on_message = on_message
+# # Set MQTT callbacks
+# client.on_connect = on_connect
+# client.on_message = on_message
 
-# Connect to MQTT broker
-client.connect("broker.hivemq.com", 1883, 8883)
+# # Connect to MQTT broker
+# client.connect("broker.hivemq.com", 1883, 8883)
 
-# Start MQTT loop
-client.loop_forever()
+# # Start MQTT loop
+# client.loop_forever()
 
 if __name__ == '__main__':
     app.run(debug=True)

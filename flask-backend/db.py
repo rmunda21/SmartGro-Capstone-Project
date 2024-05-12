@@ -9,8 +9,11 @@ mongo_db = "GreenHouse"
 def connect_to_mongodb():
     try:
         client = MongoClient(uri, server_api=ServerApi('1'))
+        client.admin.command('ping')
+        print("Ping")
         db = client[mongo_db]
         return db
     except Exception as e:
-        print(e)
+        print("Line: ", e.__traceback__.tb_lineno)
+        print("Connect Error", e)
         return
