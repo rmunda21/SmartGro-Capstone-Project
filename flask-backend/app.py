@@ -8,12 +8,12 @@
 # MQTT_TOPIC = "G_Pro_1"
 
 #Read from CSV file imports 
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 import random
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 
 # import plotly.graph_objects as go
 # import plotly.express as px
