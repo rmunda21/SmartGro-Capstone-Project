@@ -49,6 +49,7 @@ const ReadingList = () => {
             </div>
             <div className="flex flex-row gap-6 flex-wrap">
                 <MeterCard heading={"Air Quality"} reading={data ? data.AIRQUALITY:80}/>
+                {/* <SwitchCard heading={"Humidity(%)"} reading={data ? data.HUMIDITY : "34.5"} image_src={"/images/humidity.png"}/> */}
             </div>
         </div>
      );
