@@ -1,3 +1,12 @@
+# #
+# import paho.mqtt.client as mqtt
+# import json
+
+# MQTT_HOST = "mqtt.flespi.io"
+# MQTT_PORT = 8883
+# MQTT_KEEPALIVE_INTERVAL = 45
+# MQTT_TOPIC = "G_Pro_1"
+
 #Read from CSV file imports 
 # import pandas as pd
 # import numpy as np
@@ -29,7 +38,7 @@ from utils.db import connect_to_mongodb
 # from config import Config
 import os.path
 from collections import defaultdict
-# import paho.mqtt.client as mqtt
+import paho.mqtt.client as mqtt
 import json
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -74,10 +83,6 @@ def login():
         print("Invalid")
     return make_response({'message': 'success'}, 200)
 
-# @app.route('/api/Test', methods=['POST'])
-# def test():
-#     print(request.form['WHO'])
-#     return make_response({'message': 'success'}, 20
 
     
 @app.route('/api/json', methods=["GET","POST"]) 
@@ -93,23 +98,23 @@ def json_object():
         return jsonify(message) 
     return render_template('404.html'), 404
 
-# Read from CSV file
-# cropdf = pd.read_csv("flask-backend\Crop_recommendation.csv")
+# # Read from CSV file
+# cropdf = pd.read_csv("flask-backend/Crop_recommendation.csv")
 # cropdf.head()
-# print(cropdf.shape)
-# print("Number of various crops: ", len(cropdf['label'].unique()))
-# print("List of crops: ", cropdf['label'].unique())
+# # print(cropdf.shape)
+# # print("Number of various crops: ", len(cropdf['label'].unique()))
+# # print("List of crops: ", cropdf['label'].unique())
 
 # crop_summary = pd.pivot_table(cropdf,index=['label'],aggfunc='mean')
 # crop_summary.head()
-# print(crop_summary)
+# # print(crop_summary)
 
-# Convert crop_summary to JSON
+# # Convert crop_summary to JSON
 # crop_summary_json = crop_summary.to_json(orient='index')
 
-# # Write JSON to a file
-# with open('flask-backend\crop_summary.json', 'w') as file:
-#     file.write(crop_summary_json)
+# # # Write JSON to a file
+# # with open('flask-backend\crop_summary.json', 'w') as file:
+# #     file.write(crop_summary_json)
 
 # MongoDB settings
 uri = "mongodb+srv://andre:r8ViFc2453NZPFBL@farmdata.gv5ejiy.mongodb.net/?retryWrites=true&w=majority&appName=FarmData"
@@ -128,6 +133,7 @@ db = connect_to_mongodb()
 
 
 
+
 # MQTT on_connect callback
 def on_connect(client, userdata, flags, rc):
   print("Connected to MQTT broker")
@@ -139,7 +145,7 @@ def on_message(client, userdata, msg):
     print(msg.payload.decode())
     # Parse JSON data
     data = json.loads(msg.payload.decode())
-    # print(data)
+    print(data)
     
     # Connect to MongoDB
     # client = MongoClient(mongo_host, mongo_port) # for local host
@@ -154,29 +160,60 @@ def on_message(client, userdata, msg):
 
     
     # Read from MongoDB
-    temp = crop.find_one({}, { "blackgram.temperature": 1 })
-    temperature = temp['blackgram']['temperature']
-    rain = crop.find_one({}, { "blackgram.rainfall": 1 })
-    rainfall = rain['blackgram']['rainfall']
-    print(round(temperature,2),int(round(rainfall)))
+    cropType = "blackgram"
+    temperature = crop.find_one({}, { f"{cropType}.temperature": 1 })
+    temperature = temperature[cropType]['temperature']
+    
+    rain = crop.find_one({}, { f"{cropType}.rainfall": 1 })
+    rain = rain[cropType]['rainfall']
+    
+    potassium = crop.find_one({}, { f"{cropType}.K": 1 })
+    potassium = potassium[cropType]['K']
+    
+    nitrogen = crop.find_one({}, { f"{cropType}.N": 1 })
+    nitrogen = nitrogen[cropType]['N']
+    
+    phosphorus = crop.find_one({}, { f"{cropType}.P": 1 })
+    phosphorus = phosphorus[cropType]['P']
+    
+    # print(potassium)
+    
+    data = bytearray(json.dumps({
+        "Type" : "CropData",
+        "CropName": cropType,
+        "temperature": temperature,
+        "rain": rain,
+        "potassium": potassium,
+        "nitrogen": nitrogen,
+        "phosphorus": phosphorus
+    }), 'utf-8')
+    # print(round(temperature,2),int(round(rain,2)),int(round(potassium,2)))
+    # client.publish("G_Pro_1", round(temperature,2))
+    client.publish("G_Pro_1",data)
+    
     
     print("Data inserted into MongoDB")
     
   except Exception as e:
     print(str(e))
 
-# # Create MQTT client
-# client = mqtt.Client()
+# Create MQTT client
+client = mqtt.Client()
 
-# # Set MQTT callbacks
-# client.on_connect = on_connect
-# client.on_message = on_message
 
-# # Connect to MQTT broker
-# client.connect("broker.hivemq.com", 1883, 8883)
+# Set MQTT callbacks
+client.on_connect = on_connect
+client.on_message = on_message
 
-# # Start MQTT loop
-# client.loop_forever()
+# Set MQTT username and password
+client.username_pw_set("8z5wLEG2qXPH1MtDJzYNTkzo7eFQELAwB9hSRO4FeajhoWMdcFu9gWgS3gLYk52w", "")
+
+# Connect to MQTT broker
+client.connect("mqtt.flespi.io", 1883, 8883)
+client.publish("G_Pro_1", "Hello from Flask")
+
+# Start MQTT loop
+client.loop_forever()
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -254,7 +291,7 @@ def on_message(self,client, userdata, msg):
 
         # Insert message into database
         self.db.insertFromCCS(data)
-        self.db.insertCropData(crop_summary_json)
+        # self.db.insertCropData(crop_summary_json)
             
 def Publish(self,topic,payload):
         self.client.publish(topic,payload)
@@ -268,6 +305,7 @@ def Publish(self,topic,payload):
 #             'data': row
 #         }
 #         # client.publish("G001", json.dumps(json_data))
+
 
 class DB:
     def __init__(self, Config):
