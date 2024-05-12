@@ -1,3 +1,12 @@
+# #
+# import paho.mqtt.client as mqtt
+# import json
+
+# MQTT_HOST = "mqtt.flespi.io"
+# MQTT_PORT = 8883
+# MQTT_KEEPALIVE_INTERVAL = 45
+# MQTT_TOPIC = "G_Pro_1"
+
 #Read from CSV file imports 
 import pandas as pd
 import numpy as np
@@ -74,10 +83,6 @@ def login():
         print("Invalid")
     return make_response({'message': 'success'}, 200)
 
-# @app.route('/api/Test', methods=['POST'])
-# def test():
-#     print(request.form['WHO'])
-#     return make_response({'message': 'success'}, 20
 
     
 @app.route('/api/json', methods=["GET","POST"]) 
@@ -128,6 +133,7 @@ db = connect_to_mongodb()
 
 
 
+
 # MQTT on_connect callback
 def on_connect(client, userdata, flags, rc):
   print("Connected to MQTT broker")
@@ -147,18 +153,44 @@ def on_message(client, userdata, msg):
     # db = client[mongo_db]
     db = connect_to_mongodb()
     collection = db[mongo_collection]
-    # crop = db[crop_data_collection]
+    crop = db[crop_data_collection]
     
     # Insert data into MongoDB
     collection.insert_one(data)
 
     
-    # # Read from MongoDB
-    # temp = crop.find_one({}, { "blackgram.temperature": 1 })
-    # temperature = temp['blackgram']['temperature']
-    # rain = crop.find_one({}, { "blackgram.rainfall": 1 })
-    # rainfall = rain['blackgram']['rainfall']
-    # print(round(temperature,2),int(round(rainfall)))
+    # Read from MongoDB
+    cropType = "blackgram"
+    temperature = crop.find_one({}, { f"{cropType}.temperature": 1 })
+    temperature = temperature[cropType]['temperature']
+    
+    rain = crop.find_one({}, { f"{cropType}.rainfall": 1 })
+    rain = rain[cropType]['rainfall']
+    
+    potassium = crop.find_one({}, { f"{cropType}.K": 1 })
+    potassium = potassium[cropType]['K']
+    
+    nitrogen = crop.find_one({}, { f"{cropType}.N": 1 })
+    nitrogen = nitrogen[cropType]['N']
+    
+    phosphorus = crop.find_one({}, { f"{cropType}.P": 1 })
+    phosphorus = phosphorus[cropType]['P']
+    
+    # print(potassium)
+    
+    data = bytearray(json.dumps({
+        "Type" : "CropData",
+        "CropName": cropType,
+        "temperature": temperature,
+        "rain": rain,
+        "potassium": potassium,
+        "nitrogen": nitrogen,
+        "phosphorus": phosphorus
+    }), 'utf-8')
+    # print(round(temperature,2),int(round(rain,2)),int(round(potassium,2)))
+    # client.publish("G_Pro_1", round(temperature,2))
+    client.publish("G_Pro_1",data)
+    
     
     print("Data inserted into MongoDB")
     
@@ -167,6 +199,7 @@ def on_message(client, userdata, msg):
 
 # Create MQTT client
 client = mqtt.Client()
+
 
 # Set MQTT callbacks
 client.on_connect = on_connect
@@ -177,6 +210,7 @@ client.username_pw_set("8z5wLEG2qXPH1MtDJzYNTkzo7eFQELAwB9hSRO4FeajhoWMdcFu9gWgS
 
 # Connect to MQTT broker
 client.connect("mqtt.flespi.io", 1883, 8883)
+client.publish("G_Pro_1", "Hello from Flask")
 
 # Start MQTT loop
 client.loop_forever()
@@ -271,6 +305,7 @@ def Publish(self,topic,payload):
 #             'data': row
 #         }
 #         # client.publish("G001", json.dumps(json_data))
+
 
 class DB:
     def __init__(self, Config):
