@@ -124,7 +124,7 @@ crop_data_collection = "CropData"
 # db = client[mongo_db]
 db = connect_to_mongodb()
 
-
+# MQTT settings
 
 
 
