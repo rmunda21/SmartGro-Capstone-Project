@@ -1,3 +1,20 @@
+#Read from CSV file imports 
+import pandas as pd
+import numpy as np
+import random
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# import plotly.graph_objects as go
+# import plotly.express as px
+# from plotly.subplots import make_subplots
+
+colorarr = ['#0592D0','#Cd7f32', '#E97451', '#Bdb76b', '#954535', '#C2b280', '#808000','#C2b280', '#E4d008', '#9acd32', '#Eedc82', '#E4d96f',
+           '#32cd32','#39ff14','#00ff7f', '#008080', '#36454f', '#F88379', '#Ff4500', '#Ffb347', '#A94064', '#E75480', '#Ffb6c1', '#E5e4e2',
+           '#Faf0e6', '#8c92ac', '#Dbd7d2','#A7a6ba', '#B38b6d']
+
+
 from flask import Flask, request, make_response
 import os
 from dotenv import load_dotenv
@@ -6,8 +23,7 @@ from flask import Flask, make_response, request
 from time import time, ctime, sleep
 from math import floor
 from datetime import datetime, timedelta
-from db import connect_to_mongodb
-from utils.auth import authenticate_user, register_user
+from utils.db import connect_to_mongodb
 
 
 # from config import Config
@@ -61,11 +77,7 @@ def login():
 # @app.route('/api/Test', methods=['POST'])
 # def test():
 #     print(request.form['WHO'])
-#     return make_response({'message': 'success'}, 200)
-
-
-
-
+#     return make_response({'message': 'success'}, 20
 
     
 @app.route('/api/json', methods=["GET","POST"]) 
@@ -81,7 +93,23 @@ def json_object():
         return jsonify(message) 
     return render_template('404.html'), 404
 
+# Read from CSV file
+cropdf = pd.read_csv("flask-backend\Crop_recommendation.csv")
+cropdf.head()
+# print(cropdf.shape)
+# print("Number of various crops: ", len(cropdf['label'].unique()))
+# print("List of crops: ", cropdf['label'].unique())
 
+crop_summary = pd.pivot_table(cropdf,index=['label'],aggfunc='mean')
+crop_summary.head()
+# print(crop_summary)
+
+# Convert crop_summary to JSON
+crop_summary_json = crop_summary.to_json(orient='index')
+
+# # Write JSON to a file
+# with open('flask-backend\crop_summary.json', 'w') as file:
+#     file.write(crop_summary_json)
 
 # MongoDB settings
 uri = "mongodb+srv://andre:r8ViFc2453NZPFBL@farmdata.gv5ejiy.mongodb.net/?retryWrites=true&w=majority&appName=FarmData"
@@ -89,10 +117,15 @@ mongo_host = "localhost"
 mongo_port = 27017
 mongo_db = "GreenHouse"
 mongo_collection = "FarmData"
+crop_data_collection = "CropData"
 
 # Connect to MongoDB
 # client = MongoClient(uri, server_api=ServerApi('1')) # for cloud
 # db = client[mongo_db]
+db = connect_to_mongodb()
+
+
+
 
 
 # MQTT on_connect callback
@@ -106,7 +139,7 @@ def on_message(client, userdata, msg):
     print(msg.payload.decode())
     # Parse JSON data
     data = json.loads(msg.payload.decode())
-    print(data)
+    # print(data)
     
     # Connect to MongoDB
     # client = MongoClient(mongo_host, mongo_port) # for local host
@@ -114,14 +147,23 @@ def on_message(client, userdata, msg):
     # db = client[mongo_db]
     db = connect_to_mongodb()
     collection = db[mongo_collection]
+    crop = db[crop_data_collection]
     
     # Insert data into MongoDB
     collection.insert_one(data)
+
+    
+    # Read from MongoDB
+    temp = crop.find_one({}, { "blackgram.temperature": 1 })
+    temperature = temp['blackgram']['temperature']
+    rain = crop.find_one({}, { "blackgram.rainfall": 1 })
+    rainfall = rain['blackgram']['rainfall']
+    print(round(temperature,2),int(round(rainfall)))
     
     print("Data inserted into MongoDB")
     
   except Exception as e:
-    print("Error:", str(e))
+    print(str(e))
 
 # # Create MQTT client
 # client = mqtt.Client()
@@ -212,19 +254,20 @@ def on_message(self,client, userdata, msg):
 
         # Insert message into database
         self.db.insertFromCCS(data)
+        self.db.insertCropData(crop_summary_json)
             
 def Publish(self,topic,payload):
         self.client.publish(topic,payload)
         
         # Read from CSV file
-with open('data.csv', 'r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        # Process each row of data
-        json_data = {
-            'data': row
-        }
-        client.publish("G001", json.dumps(json_data))
+# with open('Crop_recommendation.csv', 'r') as file:
+#     reader = csv.reader(file)
+#     for row in reader:
+#         # Process each row of data
+#         json_data = {
+#             'data': row
+#         }
+#         # client.publish("G001", json.dumps(json_data))
 
 class DB:
     def __init__(self, Config):
@@ -322,6 +365,22 @@ class DB:
             return False
         else:                  
             return True
+        
+        
+    # def insertCropData(self, crop_summary_json):
+        
+    #     try:
+    #         remotedb = self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port))
+    #         result = remotedb["GreenHouse"]["CropData"].insert_one(crop_summary_json)
+    #         print("CropData inserted into MongoDB")
+    #     except Exception as e:
+    #         error = str(e)
+    #         if not "duplicate" in error:
+    #             print(error)
+    #         return False
+    #     else:                  
+    #         return True
+
 
 
 

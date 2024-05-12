@@ -12,7 +12,14 @@ def connect_to_mongodb():
         client.admin.command('ping')
         print("Ping")
         db = client[mongo_db]
+        
+
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
         return db
+
+    
+    
     except Exception as e:
         print("Line: ", e.__traceback__.tb_lineno)
         print("Connect Error", e)
