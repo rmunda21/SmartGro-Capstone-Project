@@ -26,9 +26,10 @@ def register():
         form_data = request.form
         username = form_data['username']
         firstname = form_data['firstname']
+        croptype = form_data['croptype']
         lastname = form_data['lastname']
         password = form_data['password']
-        user = register_user(username=username, password=password, firstname=firstname, lastname=lastname)
+        user = register_user(username=username, croptype=croptype, password=password, firstname=firstname, lastname=lastname)
         if user:
             print("User added")
             return make_response({'message': 'success'}, 200)
