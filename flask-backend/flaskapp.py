@@ -1,10 +1,11 @@
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, session
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask import render_template, request, jsonify
 from flask import Flask, make_response, request
 from utils.db import connect_to_mongodb
 from utils.auth import register_user, authenticate_user
+from utils.session import CustomSession
 
 # from config import Config
 from collections import defaultdict
@@ -32,6 +33,11 @@ def register():
         user = register_user(username=username, croptype=croptype, password=password, firstname=firstname, lastname=lastname)
         if user:
             print("User added")
+            session_data = {'username': username, 'croptype': croptype, 'firstname': firstname, 'lastname': lastname}
+            session_id = CustomSession.create_session(session_data)
+            if not session_id:
+                raise Exception
+            session['session_id'] = session_id
             return make_response({'message': 'success'}, 200)
         elif user == False:
             print("User already exists")
@@ -49,10 +55,13 @@ def login():
     form_data = request.form
     username = form_data['username']
     password = form_data['password']
-    print()
     user = authenticate_user(username=username, password=password)
-    print(user)
     if user:
+        session_data = {'username': user['username'], 'croptype': user['croptype'], 'firstname': user['firstname'], 'lastname': user['lastname']}
+        session_id = CustomSession.create_session(session_data)
+        if not session_id:
+            raise Exception
+        session['session_id'] = session_id
         return make_response({'message': 'success'}, 200)
     elif user == False:
         return make_response({'message': 'Invalid username/password entered'}, 400)
