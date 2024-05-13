@@ -11,7 +11,7 @@ def register_user(username: str, croptype: str, password: str, firstname: str, l
             return False
         user = collection.insert_one({
             'username': username,
-            'croptype': croptype,
+            'croptype': croptype.lower(),
             'hash_password': generate_password_hash(password=password),
             'firstname': firstname,
             'lastname': lastname,
