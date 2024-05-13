@@ -13,8 +13,8 @@ import dynamic from "next/dynamic";
     width: "100%",
     series: [
       {
-        name: "Sales",
-        data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
+        name: "Temperature",
+        data: [25, 30, 35],
       },
     ],
     options: {
@@ -100,7 +100,7 @@ import dynamic from "next/dynamic";
   export default function LineChart() {
     return (
       <Card className="w-[50%]">
-        <h1 className="font-bold text-lg">Line Chart</h1>
+        <h1 className="font-bold text-lg">Temperature</h1>
         <Chart {...chartConfig} />
       </Card>
     );
