@@ -13,8 +13,10 @@ import {
     TableCellsIcon,
     InformationCircleIcon,
     ChartBarIcon,
-    HomeIcon
+    HomeIcon,
+    PowerIcon
   } from "@heroicons/react/24/solid";
+  import Link from 'next/link'
    
   export function DefaultSidebar() {
     return (
@@ -29,38 +31,38 @@ import {
             <ListItemPrefix>
               <HomeIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Home
+            <Link href={"/dashboard/home"}>Home</Link>
           </ListItem>
           <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Live Readings
+            <Link href={"/dashboard/live-readings"}>Live Readings</Link>
           </ListItem>
           <ListItem>
             <ListItemPrefix>
               <ChartBarIcon className="h-5 w-5" />
             </ListItemPrefix>
-            History
+            <Link href={"/dashboard/history"}>History</Link>
           </ListItem>
           <ListItem>
             <ListItemPrefix>
               <InformationCircleIcon className="h-5 w-5" />
             </ListItemPrefix>
-            About
+            <Link href={"/dashboard/about"}>About</Link>
           </ListItem>
           {/* <ListItem>
             <ListItemPrefix>
               <Cog6ToothIcon className="h-5 w-5" />
             </ListItemPrefix>
             Settings
-          </ListItem>
+          </ListItem> */}
           <ListItem>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />
             </ListItemPrefix>
             Log Out
-          </ListItem> */}
+          </ListItem>
         </List>
       </Card>
     );

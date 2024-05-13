@@ -17,8 +17,8 @@ def connect_to_mongodb():
         db = client[mongo_db]
         
 
-        # client.admin.command('ping')
-        # print("Pinged your deployment. You successfully connected to MongoDB!")
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
         return db
 
     

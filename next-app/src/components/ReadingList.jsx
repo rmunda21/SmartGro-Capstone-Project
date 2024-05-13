@@ -17,7 +17,7 @@ const ReadingList = () => {
 
     const MQTTconnect = () => {
         const url = "wss://mqtt.flespi.io:443"// MQTT HOST
-        const client = mqtt.connect(url, {
+        const client =  mqtt.connect(url, {
             username: "8z5wLEG2qXPH1MtDJzYNTkzo7eFQELAwB9hSRO4FeajhoWMdcFu9gWgS3gLYk52w",
         })
 
@@ -56,9 +56,9 @@ const ReadingList = () => {
                 <MyReadingsCard classname={"bg-brown-50 border-brown-100"} isLoading={isLoading} heading={"Soil Mositure(%)"} reading={data ? data.SOILMOISTURE:"34.5"} image_src={"/images/soil_moisture.png"}/>
             </div>
             <div className="flex flex-row gap-6 flex-wrap">
-                <MyReadingsCard classname={"bg-red-50 border-red-100"} isLoading={isLoading} heading={"Potassium(K)"} reading={data ? data.POTASSIUM:"34.5"} image_src={"/images/potassium.png"}/>
-                <MyReadingsCard classname={"bg-green-50 border-green-100"} isLoading={isLoading} heading={"Nitrogen(N)"} reading={data ? data.NITROGEN:"93234.5"} image_src={"/images/nitrogen.png"}/>
-                <MyReadingsCard classname={"bg-brown-50 border-yellow-100"} isLoading={isLoading} heading={"Phosphorus(P)"} reading={data ? data.PHOSPHORUS:"34.5"} image_src={"/images/phosphorus.png"}/>
+                <MyReadingsCard classname={"bg-red-50 border-red-100"} isLoading={isLoading} heading={"Potassium(K) Kg/ha"} reading={data ? data.POTASSIUM:"34.5"} image_src={"/images/potassium.png"}/>
+                <MyReadingsCard classname={"bg-green-50 border-green-100"} isLoading={isLoading} heading={"Nitrogen(N) Kg/ha"} reading={data ? data.NITROGEN:"93234.5"} image_src={"/images/nitrogen.png"}/>
+                <MyReadingsCard classname={"bg-brown-50 border-yellow-100"} isLoading={isLoading} heading={"Phosphorus(P) Kg/ha"} reading={data ? data.PHOSPHORUS:"34.5"} image_src={"/images/phosphorus.png"}/>
             </div>
             <div className="flex flex-row gap-6 flex-wrap">
                 <MeterCard isLoading={isLoading} heading={"Air Quality"} reading={data ? data.AIRQUALITY : 80}/>

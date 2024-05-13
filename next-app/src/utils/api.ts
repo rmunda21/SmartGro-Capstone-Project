@@ -8,6 +8,7 @@ export class APIEndpoint{
 
     private async makeRequest<T>(method: string, endpoint: string, data?: any){
         const url = `${this.url}${endpoint}`
+        console.log(url)
         const options: RequestInit = {
             method: method,
             credentials: 'include'

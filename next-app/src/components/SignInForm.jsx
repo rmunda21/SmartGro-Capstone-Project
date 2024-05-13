@@ -17,8 +17,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { APIEndpoint } from '@/utils/api';
+import { useRouter } from 'next/navigation'
 
 const SignInForm = () => {
+
+    const router = useRouter()
 
     const formSchema = z.object({
         username: z.string().min(1, {
@@ -41,6 +44,11 @@ const SignInForm = () => {
         console.log(data)
         const loginAPI = new APIEndpoint()
         loginAPI.post('login/', data)
+        .then((res)=>{
+            router.push('/dashboard/home')
+            console.log(res)
+        })
+        .catch(err=>console.log(err))
     }
 
     return ( 
