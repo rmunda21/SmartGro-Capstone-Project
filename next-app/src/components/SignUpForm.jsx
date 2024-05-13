@@ -24,6 +24,7 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 import { APIEndpoint } from "@/utils/api";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
 
@@ -31,6 +32,8 @@ const SignUpForm = () => {
     'Mothbeans', 'Mungbean', 'Blackgram', 'Lentil', 'Pomegranate',
     'Banana', 'Mango', 'Grapes', 'Watermelon', 'Muskmelon', 'Apple',
     'Orange', 'Papaya', 'Coconut', 'Cotton', 'Jute', 'Coffee']
+
+    const router = useRouter()
 
   const formSchema = z.object({
     firstname: z.string().min(1, {
@@ -67,9 +70,9 @@ const SignUpForm = () => {
       .post("register/", data)
       .then((res) => {
         console.log(res);
+        router.push("/dashboard/home")
       })
       .catch((err) => console.log(err));
-    console.log(data);
   };
 
   return (
