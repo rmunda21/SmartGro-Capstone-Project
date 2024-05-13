@@ -49,7 +49,7 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
       console.log(status, state)
       if (status === "lighting"){
          const message = JSON.stringify({
-            TYPE: "SWITCHSTATUS",
+            Type: "SWITCH",
             status: "LIGHTSTATUS",
             requested_state: state
          })
@@ -58,7 +58,7 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
       }
       else{
          const message = JSON.stringify({
-            TYPE: "SWITCHSTATUS",
+            Type: "SWITCH",
             status: "PUMPSTATUS",
             requested_state: state
          })
