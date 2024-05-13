@@ -51,6 +51,10 @@ const SignUpForm = () => {
     password: z.string().min(1, {
       message: "This field is required.",
     }),
+
+    quantity: z.string().min(1, {
+    message: "This field is required.",
+    }),
   });
 
   const form = useForm({
@@ -61,6 +65,7 @@ const SignUpForm = () => {
       username: "",
       password: "",
       croptype: "",
+      quantity: "",
     },
   });
 
@@ -144,6 +149,23 @@ const SignUpForm = () => {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="quantity"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Quantity</FormLabel>
+              <FormControl>
+                <Input placeholder="Quantity" {...field} />
+              </FormControl>
+              <FormDescription>
+                You can change your quantity later.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="password"
