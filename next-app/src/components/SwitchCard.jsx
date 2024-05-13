@@ -26,12 +26,12 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
       return (
          <div className="flex flex-col">
                <div className='flex flex-row justify-between p-5'>
-                  <h4 className="font-bold text-slate-600 text-lg">Cooling</h4>
-                  <Switch checked={statuses.COOLINGSTATUS} disabled/>
+                  <h4 className="font-bold text-slate-600 text-lg">Cooling Status</h4>
+                  <Switch checked={statuses.COOLINGSTATUS === "ON" ? True : False} disabled/>
                </div>
                <div className='flex flex-row justify-between p-5'>
-                  <h4 className="font-bold text-slate-600 text-lg">Heating</h4>
-                  <Switch checked={statuses.HEATINGSTATUS} disabled/>
+                  <h4 className="font-bold text-slate-600 text-lg">Heating Status</h4>
+                  <Switch checked={statuses.HEATINGSTATUS === "ON" ? True : False} disabled/>
                </div>
                <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Light</h4>
