@@ -1,127 +1,22 @@
-# #
-# import paho.mqtt.client as mqtt
-# import json
+from flask import Flask
+import os
+from dotenv import load_dotenv
+from flask import Flask
+from utils.db import connect_to_mongodb
 
-# MQTT_HOST = "mqtt.flespi.io"
-# MQTT_PORT = 8883
-# MQTT_KEEPALIVE_INTERVAL = 45
-# MQTT_TOPIC = "G_Pro_1"
 
-#Read from CSV file imports 
-# import pandas as pd
-# import numpy as np
-import random
-
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-
-# import plotly.graph_objects as go
-# import plotly.express as px
-# from plotly.subplots import make_subplots
+# from config import Config
+import os.path
+import paho.mqtt.client as mqtt
+import json
 
 colorarr = ['#0592D0','#Cd7f32', '#E97451', '#Bdb76b', '#954535', '#C2b280', '#808000','#C2b280', '#E4d008', '#9acd32', '#Eedc82', '#E4d96f',
            '#32cd32','#39ff14','#00ff7f', '#008080', '#36454f', '#F88379', '#Ff4500', '#Ffb347', '#A94064', '#E75480', '#Ffb6c1', '#E5e4e2',
            '#Faf0e6', '#8c92ac', '#Dbd7d2','#A7a6ba', '#B38b6d']
 
-
-from flask import Flask, request, make_response
-from flask_cors import CORS
-import os
-from dotenv import load_dotenv
-from flask import render_template, request, redirect, url_for, flash, session, send_from_directory, abort , jsonify
-from flask import Flask, make_response, request
-from time import time, ctime, sleep
-from math import floor
-from datetime import datetime, timedelta
-from utils.db import connect_to_mongodb
-from utils.auth import register_user, authenticate_user
-
-
-# from config import Config
-import os.path
-from collections import defaultdict
-import paho.mqtt.client as mqtt
-import json
-from pymongo import MongoClient
-from pymongo.server_api import ServerApi
-import csv
-
-
 load_dotenv()  # LOAD .env FILES IN CURRENT FOLDER
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '6#uon)rmr-^+#7!gyon^#^hc^19vhs!6$)$s092mn+jfa_6*gd'
-cors = CORS(app, supports_credentials=True, allow_headers=True)
-
-
-@app.route('/api/register/', methods=['POST'])
-def register():
-    try:
-        form_data = request.form
-        username = form_data['username']
-        firstname = form_data['firstname']
-        lastname = form_data['lastname']
-        password = form_data['password']
-        user = register_user(username=username, password=password, firstname=firstname, lastname=lastname)
-        if user:
-            print("User added")
-            return make_response({'message': 'success'}, 200)
-        elif user == False:
-            print("User already exists")
-            return make_response({'message': 'User already exists'}, 400)
-        else:
-            print("Error")
-        return make_response({'message': 'error'}, 400)
-    except Exception as e:
-        print("Test: ", e)
-        returmake_response({'message': "Error"}, 400)
-    
-
-@app.route('/api/login/', methods=['POST'])
-def login():
-    form_data = request.form
-    username = form_data['username']
-    password = form_data['password']
-    print()
-    user = authenticate_user(username=username, password=password)
-    print(user)
-    if user:
-        return make_response({'message': 'success'}, 200)
-    elif user == False:
-        return make_response({'message': 'Invalid username/password entered'}, 400)
-    return make_response({'message': 'error'}, 400)
-
-
-    
-@app.route('/api/json', methods=["GET","POST"]) 
-def json_object(): 
-    """Returns Json object""" 
-    if request.method == "GET": 
-        # Process GET requests 
-        message = {"status":"GET request received"} 
-        return jsonify(message) 
-    if request.method == "POST": 
-        # Process POST requests 
-        message = {"status":"POST request received"} 
-        return jsonify(message) 
-    return render_template('404.html'), 404
-
-# # Read from CSV file
-# cropdf = pd.read_csv("flask-backend/Crop_recommendation.csv")
-# cropdf.head()
-# # print(cropdf.shape)
-# # print("Number of various crops: ", len(cropdf['label'].unique()))
-# # print("List of crops: ", cropdf['label'].unique())
-
-# crop_summary = pd.pivot_table(cropdf,index=['label'],aggfunc='mean')
-# crop_summary.head()
-# # print(crop_summary)
-
-# # Convert crop_summary to JSON
-# crop_summary_json = crop_summary.to_json(orient='index')
-
-# # # Write JSON to a file
-# # with open('flask-backend\crop_summary.json', 'w') as file:
-# #     file.write(crop_summary_json)
 
 # MongoDB settings
 uri = "mongodb+srv://andre:r8ViFc2453NZPFBL@farmdata.gv5ejiy.mongodb.net/?retryWrites=true&w=majority&appName=FarmData"
@@ -133,8 +28,6 @@ crop_data_collection = "CropData"
 user_data_collection = "UserData"
 
 # Connect to MongoDB
-# client = MongoClient(uri, server_api=ServerApi('1')) # for cloud
-# db = client[mongo_db]
 db = connect_to_mongodb()
 
 # MQTT settings
@@ -195,7 +88,8 @@ def on_message(client, userdata, msg):
         "nitrogen": nitrogen,
         "phosphorus": phosphorus
     }), 'utf-8')
-     
+    # print(round(temperature,2),int(round(rain,2)),int(round(potassium,2)))
+    # client.publish("G_Pro_1", round(temperature,2))
     client.publish("G_Pro_1",mqtt_data)
     
     
@@ -222,10 +116,10 @@ client.connect("mqtt.flespi.io", 1883, 8883)
 
 
 # # Start MQTT loop
-client.loop()
+client.loop_forever()
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5000)
+    app.run(debug=True, port=8000)
 
 #################################################################################################################################################
 #                                                    CLASSES CONTAINING ALL THE APP FUNCTIONS                                                                                                    #

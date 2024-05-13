@@ -1,28 +1,24 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-from db import connect_to_mongodb
-from flask import jsonify
+from utils.db import connect_to_mongodb
+import json
 
 def register_user(username: str, password: str, firstname: str, lastname: str):
     try:
         db = connect_to_mongodb()
         collection = db['UserData']
-        # user = collection.find({username})
-        
-        rows = collection.find({'username': username})
-        rows = list(row)
-        for row in rows:
-            if row:
-                return False
-
+        user = collection.find_one({"username":username})
+        if user:
+            return False
         user = collection.insert_one({
             'username': username,
             'hash_password': generate_password_hash(password=password),
             'firstname': firstname,
             'lastname': lastname,
         })
+        print(user)
         return user
     except Exception as e:
-        print('Error Msg', e.__traceback__.tb_lineno)
+        print('Error Msg', e)
         return None
 
 def authenticate_user(username: str, password: str):
@@ -31,7 +27,12 @@ def authenticate_user(username: str, password: str):
         collection = db['UserData']
         user_data = collection.find_one({'username': username})
         if user_data:
-            return user_data
+            # print(user_data)
+            hash_password = user_data['hash_password']
+            if check_password_hash(hash_password, password):
+                return user_data
+            else:
+                return False
         else:
             return None
     except Exception as e:
