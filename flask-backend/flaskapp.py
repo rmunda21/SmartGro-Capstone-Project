@@ -46,27 +46,37 @@ def register():
             print("Error")
         return make_response({'message': 'error'}, 400)
     except Exception as e:
-        print("Test: ", e)
         return make_response({'message': "Error"}, 400)
     
 
 @app.route('/api/login/', methods=['POST'])
 def login():
-    form_data = request.form
-    username = form_data['username']
-    password = form_data['password']
-    user = authenticate_user(username=username, password=password)
-    if user:
-        session_data = {'username': user['username'], 'croptype': user['croptype'], 'firstname': user['firstname'], 'lastname': user['lastname']}
-        session_id = CustomSession.create_session(session_data)
-        if not session_id:
-            raise Exception
-        session['session_id'] = session_id
-        return make_response({'message': 'success'}, 200)
-    elif user == False:
-        return make_response({'message': 'Invalid username/password entered'}, 400)
-    return make_response({'message': 'error'}, 400)
+    try:
+        form_data = request.form
+        username = form_data['username']
+        password = form_data['password']
+        user = authenticate_user(username=username, password=password)
+        if user:
+            session_data = {'username': user['username'], 'croptype': user['croptype'], 'firstname': user['firstname'], 'lastname': user['lastname']}
+            session_id = CustomSession.create_session(session_data)
+            if not session_id:
+                raise Exception
+            session['session_id'] = session_id
+            return make_response({'message': 'success'}, 200)
+        elif user == False:
+            return make_response({'message': 'Invalid username/password entered'}, 400)
+    except Exception as e:
+        return make_response({'message': 'error'}, 400)
 
+@app.route('/api/logout/', methods=['POST'])
+def logout():
+    try:
+        session.pop('session_id', None)
+        session.pop('session', None)
+        return make_response({'message': 'success'}, 200)
+    except Exception as e:
+        return make_response({'message': 'error'}, 400)
+        
 @app.route('/api/verify/', methods=['POST'])
 def verify_session():
     try:
