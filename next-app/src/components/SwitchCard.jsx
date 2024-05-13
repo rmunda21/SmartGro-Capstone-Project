@@ -48,18 +48,22 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
    const handleToggle = (status, state)=>{
       console.log(status, state)
       if (status === "lighting"){
-         onToggle.publish('G_Pro_1', JSON.stringify({
+         const message = JSON.stringify({
             TYPE: "SWITCHSTATUS",
             status: "LIGHTSTATUS",
             requested_state: state
-         }))
+         })
+         const byteArray = Buffer.from(message, 'utf-8')
+         onToggle.publish('G_Pro_1', byteArray)
       }
       else{
-         onToggle.publish('G_Pro_1', JSON.stringify({
+         const message = JSON.stringify({
             TYPE: "SWITCHSTATUS",
             status: "PUMPSTATUS",
             requested_state: state
-         }))
+         })
+         const byteArray = Buffer.from(message, 'utf-8')
+         onToggle.publish('G_Pro_1', byteArray)
       }
          
    }
