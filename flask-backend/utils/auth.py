@@ -2,7 +2,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from utils.db import connect_to_mongodb
 import json
 
-def register_user(username: str, croptype: str, password: str, firstname: str, lastname: str):
+def register_user(username: str, croptype: str, quantity: int, password: str, firstname: str, lastname: str):
     try:
         db = connect_to_mongodb()
         collection = db['UserData']
@@ -12,6 +12,7 @@ def register_user(username: str, croptype: str, password: str, firstname: str, l
         user = collection.insert_one({
             'username': username,
             'croptype': croptype.lower(),
+            'quantity': quantity,
             'hash_password': generate_password_hash(password=password),
             'firstname': firstname,
             'lastname': lastname,

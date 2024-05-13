@@ -28,9 +28,10 @@ def register():
         username = form_data['username']
         firstname = form_data['firstname']
         croptype = form_data['croptype']
+        quantity = form_data['quantity']
         lastname = form_data['lastname']
         password = form_data['password']
-        user = register_user(username=username, croptype=croptype, password=password, firstname=firstname, lastname=lastname)
+        user = register_user(username=username, croptype=croptype, quantity=quantity, password=password, firstname=firstname, lastname=lastname)
         if user:
             print("User added")
             session_data = {'username': username, 'croptype': croptype, 'firstname': firstname, 'lastname': lastname}
