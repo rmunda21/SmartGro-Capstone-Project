@@ -73,7 +73,7 @@ def register():
         return make_response({'message': 'error'}, 400)
     except Exception as e:
         print("Test: ", e)
-        returmake_response({'message': "Error"}, 400)
+        return make_response({'message': "Error"}, 400)
     
 
 @app.route('/api/login/', methods=['POST'])

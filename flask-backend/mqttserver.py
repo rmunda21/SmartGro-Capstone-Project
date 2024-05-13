@@ -5,6 +5,7 @@ from flask import Flask
 from utils.db import connect_to_mongodb
 
 
+
 # from config import Config
 import os.path
 import paho.mqtt.client as mqtt
@@ -55,13 +56,22 @@ def on_message(client, userdata, msg):
     db = connect_to_mongodb()
     collection = db[mongo_collection]
     crop = db[crop_data_collection]
+    user_data = db[user_data_collection]
     
     # Insert data into MongoDB
     collection.insert_one(data)
-
+    
+    # user = user_data.find_one({}, { "G001.username": 1 })
+    
+    user = user_data.find_one({"username": "G001"})
+    # print("Line 1 " + user)
+    # user = user["G001"]['username']
+    # print(user)
+    
     
     # Read from MongoDB
-    cropType = "blackgram"
+    cropType = user["croptype"]
+    # print(cropType)
     temperature = crop.find_one({}, { f"{cropType}.temperature": 1 })
     temperature = temperature[cropType]['temperature']
     
