@@ -33,12 +33,13 @@ from time import time, ctime, sleep
 from math import floor
 from datetime import datetime, timedelta
 from utils.db import connect_to_mongodb
+from utils.auth import authenticate_user, register_user
 
 
 # from config import Config
 import os.path
 from collections import defaultdict
-import paho.mqtt.client as mqtt
+# import paho.mqtt.client as mqtt
 import json
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -48,6 +49,7 @@ import csv
 load_dotenv()  # LOAD .env FILES IN CURRENT FOLDER
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '6#uon)rmr-^+#7!gyon^#^hc^19vhs!6$)$s092mn+jfa_6*gd'
+
 
 @app.route('/api/register/', methods=['POST'])
 def register():
@@ -132,7 +134,7 @@ db = connect_to_mongodb()
 
 
 
-global mqtt_data
+
 # MQTT on_connect callback
 def on_connect(client, userdata, flags, rc):
   print("Connected to MQTT broker")
@@ -177,7 +179,7 @@ def on_message(client, userdata, msg):
     
     # print(potassium)
     
-    mqtt_data = bytearray(json.dumps({
+    data = bytearray(json.dumps({
         "Type" : "CropData",
         "CropName": cropType,
         "temperature": temperature,
@@ -188,7 +190,7 @@ def on_message(client, userdata, msg):
     }), 'utf-8')
     # print(round(temperature,2),int(round(rain,2)),int(round(potassium,2)))
     # client.publish("G_Pro_1", round(temperature,2))
-    client.publish("G_Pro_1",mqtt_data)
+    client.publish("G_Pro_1",data)
     
     
     print("Data inserted into MongoDB")
@@ -197,24 +199,22 @@ def on_message(client, userdata, msg):
     print(str(e))
 
 # Create MQTT client
-client = mqtt.Client()
+# client = mqtt.Client()
 
 
-# Set MQTT callbacks
-client.on_connect = on_connect
-client.on_message = on_message
+# # Set MQTT callbacks
+# client.on_connect = on_connect
+# client.on_message = on_message
 
-# Set MQTT username and password
-client.username_pw_set("8z5wLEG2qXPH1MtDJzYNTkzo7eFQELAwB9hSRO4FeajhoWMdcFu9gWgS3gLYk52w", "")
+# # Set MQTT username and password
+# client.username_pw_set("8z5wLEG2qXPH1MtDJzYNTkzo7eFQELAwB9hSRO4FeajhoWMdcFu9gWgS3gLYk52w", "")
 
-# Connect to MQTT broker
-client.connect("mqtt.flespi.io", 1883, 8883)
+# # Connect to MQTT broker
+# client.connect("mqtt.flespi.io", 1883, 8883)
 # client.publish("G_Pro_1", "Hello from Flask")
-# client.publish("G_Pro_1",mqtt_data)    
 
-
-# Start MQTT loop
-client.loop_forever()
+# # Start MQTT loop
+# client.loop_forever()
 
 if __name__ == '__main__':
     app.run(debug=True)

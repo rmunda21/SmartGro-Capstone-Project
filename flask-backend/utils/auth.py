@@ -1,5 +1,5 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-from db import connect_to_mongodb
+from utils.db import connect_to_mongodb
 from flask import jsonify
 
 def register_user(username: str, password: str, firstname: str, lastname: str):
