@@ -3,12 +3,8 @@
 import { Card } from 'flowbite-react'
 import { Switch } from "@/components/ui/switch"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useState } from 'react'
 
 const SwitchCard = ({onToggle, statuses, isLoading}) => {
-
-   const [togglePump, setTogglePump] = useState(false)
-   const [toggleLight, setToggleLight] = useState(false)
 
    function LoadingSkeleton(){
       return (
@@ -35,33 +31,35 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
                </div>
                <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Light</h4>
-                  <Switch checked={toggleLight} onCheckedChange={()=>handleToggle("lighting")} />
+                  <Switch checked={statuses.LIGHTSTATUS === "ON" ? true : false} onCheckedChange={()=>handleToggle("lighting",
+                     statuses.LIGHTSTATUS === "ON" ? false : true
+                  )} />
                </div>
                <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Pump</h4>
-                  <Switch checked={togglePump} onCheckedChange={()=>handleToggle("pump")} />
+                  <Switch checked={statuses.PUMPSTATUS === "ON" ? true : false} onCheckedChange={()=>handleToggle("pump",
+                     statuses.PUMPSTATUS === "ON" ? false : true
+                  )} />
                </div>
             </div>
       )
    }
 
-   const handleToggle = (status)=>{
-      console.log(status, onToggle)
+   const handleToggle = (status, state)=>{
+      console.log(status, state)
       if (status === "lighting"){
          onToggle.publish('G_Pro_1', JSON.stringify({
             TYPE: "SWITCHSTATUS",
             status: "LIGHTSTATUS",
-            requested_state: !toggleLight
+            requested_state: state
          }))
-         setToggleLight(!toggleLight)
       }
       else{
          onToggle.publish('G_Pro_1', JSON.stringify({
             TYPE: "SWITCHSTATUS",
             status: "PUMPSTATUS",
-            requested_state: !togglePump
+            requested_state: state
          }))
-         setTogglePump(!togglePump)
       }
          
    }

@@ -1,6 +1,7 @@
 import { MyBreadcrumb } from "@/components/Breadcrumb";
 import { MySidebar } from "@/components/Sidebar";
 import { DefaultSidebar } from "@/components/Sidebar2";
+import AuthRequired from "@/utils/AuthRequired";
 
 export const metadata = {
   title: "Dashboard | SmartGro",
@@ -9,7 +10,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <div className="w-full min-h-screen h-screen flex flex-row">
+    <AuthRequired>
+      <div className="w-full min-h-screen h-screen flex flex-row">
         <DefaultSidebar />
         <div className="p-5 w-full flex flex-col bg-gray-50 h-fit">
             <MyBreadcrumb />
@@ -18,5 +20,7 @@ export default function RootLayout({ children }) {
             </div>    
         </div>
     </div>
+    </AuthRequired>
+    
   );
 }
