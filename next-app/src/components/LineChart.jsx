@@ -97,11 +97,11 @@ import dynamic from "next/dynamic";
     },
   };
    
-  export default function LineChart() {
+  export default function LineChart({title, config=chartConfig}) {
     return (
       <Card className="w-[50%]">
-        <h1 className="font-bold text-lg">Line Chart</h1>
-        <Chart {...chartConfig} />
+        <h1 className="font-bold text-lg">{title}</h1>
+        <Chart {...config} />
       </Card>
     );
   }
