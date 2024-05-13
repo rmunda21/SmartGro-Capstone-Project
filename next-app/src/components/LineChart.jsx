@@ -53,15 +53,13 @@ import dynamic from "next/dynamic";
           },
         },
         categories: [
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thr",
+          "Fri",
+          "Sat",
+          "Sun",
         ],
       },
       yaxis: {
@@ -99,7 +97,7 @@ import dynamic from "next/dynamic";
    
   export default function LineChart({title, config=chartConfig}) {
     return (
-      <Card className="w-[50%]">
+      <Card className="w-[100%]">
         <h1 className="font-bold text-lg">{title}</h1>
         <Chart {...config} />
       </Card>

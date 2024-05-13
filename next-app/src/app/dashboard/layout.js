@@ -11,11 +11,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <AuthRequired>
-      <div className="w-full min-h-screen h-screen flex flex-row">
+      <div className="w-full flex flex-row">
         <DefaultSidebar />
-        <div className="p-5 w-full flex flex-col bg-gray-50 h-fit">
+        <div className="p-5 w-full flex flex-col bg-gray-50 h-screen">
             <MyBreadcrumb />
-            <div className="mt-5 h-fit">
+            <div className="mt-5 max-h-screen overflow-y-scroll">
                 {children}
             </div>    
         </div>

@@ -51,9 +51,8 @@ const SignUpForm = () => {
     password: z.string().min(1, {
       message: "This field is required.",
     }),
-
-    quantity: z.string().min(1, {
-    message: "This field is required.",
+    quantity: z.coerce.number().gt(0, {
+      message: "This field is required.",
     }),
   });
 
@@ -65,11 +64,12 @@ const SignUpForm = () => {
       username: "",
       password: "",
       croptype: "",
-      quantity: "",
+      quantity: 0,
     },
   });
 
   const onSubmit = (data) => {
+    console.log(data)
     const registerAPI = new APIEndpoint();
     registerAPI
       .post("register/", data)
@@ -126,9 +126,23 @@ const SignUpForm = () => {
         />
         <FormField
           control={form.control}
-          name="croptype"
+          name="password"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder="Password" type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex flex-row gap-5">
+        <FormField
+          control={form.control}
+          name="croptype"
+          render={({ field }) => (
+            <FormItem className="flex-grow">
               <FormLabel>Crop</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -153,32 +167,19 @@ const SignUpForm = () => {
           control={form.control}
           name="quantity"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex-grow">
               <FormLabel>Quantity</FormLabel>
               <FormControl>
                 <Input placeholder="Quantity" {...field} />
               </FormControl>
               <FormDescription>
-                You can change your quantity later.
+                You can change the quantity later.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder="Password" type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        </div>
         <Button className="w-full" type="submit">
           Sign Up
         </Button>

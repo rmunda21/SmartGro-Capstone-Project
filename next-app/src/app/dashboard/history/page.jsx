@@ -1,4 +1,4 @@
-import LineChart from "@/components/LineChart";
+import HistoryList from "@/components/HistoryList";
 
 export const metadata = {
     title: 'History | SmartGro'
@@ -7,7 +7,7 @@ export const metadata = {
 const HistoryPage = () => {
     return ( 
         <div className="w-full flex flex-col">
-            <LineChart />
+            <HistoryList />
         </div>
      );
 }
