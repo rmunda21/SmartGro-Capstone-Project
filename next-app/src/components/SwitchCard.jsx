@@ -26,19 +26,19 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
       return (
          <div className="flex flex-col">
                <div className='flex flex-row justify-between p-5'>
-                  <h4 className="font-bold text-slate-600 text-lg">Cooling Status</h4>
+                  <h4 className="font-bold text-slate-600 text-lg">Cooling</h4>
                   <Switch checked={statuses.COOLINGSTATUS} disabled/>
                </div>
                <div className='flex flex-row justify-between p-5'>
-                  <h4 className="font-bold text-slate-600 text-lg">Heating Status</h4>
+                  <h4 className="font-bold text-slate-600 text-lg">Heating</h4>
                   <Switch checked={statuses.HEATINGSTATUS} disabled/>
                </div>
                <div className='flex flex-row justify-between p-5'>
-                  <h4 className="font-bold text-slate-600 text-lg">Light Status</h4>
+                  <h4 className="font-bold text-slate-600 text-lg">Light</h4>
                   <Switch checked={toggleLight} onCheckedChange={()=>handleToggle("lighting")} />
                </div>
                <div className='flex flex-row justify-between p-5'>
-                  <h4 className="font-bold text-slate-600 text-lg">Pump Status</h4>
+                  <h4 className="font-bold text-slate-600 text-lg">Pump</h4>
                   <Switch checked={togglePump} onCheckedChange={()=>handleToggle("pump")} />
                </div>
             </div>
