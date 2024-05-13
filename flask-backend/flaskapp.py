@@ -67,6 +67,19 @@ def login():
         return make_response({'message': 'Invalid username/password entered'}, 400)
     return make_response({'message': 'error'}, 400)
 
+@app.route('/api/verify/', methods=['POST'])
+def verify_session():
+    try:
+        if 'session_id' in session:
+            session_id = session['session_id']
+            session_data = CustomSession.get_session(session_id)
+            # If session data is present then the user is authenticated
+            if session_data:
+                return make_response({'message': 'success'}, 200)
+            return make_response({'message': 'invalid'}, 400)
+    except Exception as e:
+        print(e)
+        return make_response({'message': 'error'}, 400)
 
     
 @app.route('/api/json', methods=["GET","POST"]) 
