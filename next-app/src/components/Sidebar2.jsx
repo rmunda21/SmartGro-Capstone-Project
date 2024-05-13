@@ -17,8 +17,13 @@ import {
     PowerIcon
   } from "@heroicons/react/24/solid";
   import Link from 'next/link'
+import { APIEndpoint } from "@/utils/api";
+import { useRouter } from "next/navigation";
    
   export function DefaultSidebar() {
+
+    const router = useRouter()
+
     return (
       <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
         <div className="mb-2 p-4">
@@ -57,7 +62,15 @@ import {
             </ListItemPrefix>
             Settings
           </ListItem> */}
-          <ListItem>
+          <ListItem onClick={()=>{
+            const logoutAPI = new APIEndpoint()
+            logoutAPI.post('logout/')
+            .then((res)=>{
+              console.log(res)
+              router.push('/sign-in')
+            })
+            .catch(err=>console.log(err))
+          }}>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />
             </ListItemPrefix>

@@ -58,7 +58,7 @@ const ReadingList = () => {
             <div className="flex flex-row gap-6 flex-wrap">
                 <MyReadingsCard classname={"bg-red-50 border-red-100"} isLoading={isLoading} heading={"Potassium(K) Kg/ha"} reading={data ? data.POTASSIUM:"34.5"} image_src={"/images/potassium.png"}/>
                 <MyReadingsCard classname={"bg-green-50 border-green-100"} isLoading={isLoading} heading={"Nitrogen(N) Kg/ha"} reading={data ? data.NITROGEN:"93234.5"} image_src={"/images/nitrogen.png"}/>
-                <MyReadingsCard classname={"bg-brown-50 border-yellow-100"} isLoading={isLoading} heading={"Phosphorus(P) Kg/ha"} reading={data ? data.PHOSPHORUS:"34.5"} image_src={"/images/phosphorus.png"}/>
+                <MyReadingsCard classname={"bg-brown-50 border-brown-100"} isLoading={isLoading} heading={"Phosphorus(P) Kg/ha"} reading={data ? data.PHOSPHORUS:"34.5"} image_src={"/images/phosphorus.png"}/>
             </div>
             <div className="flex flex-row gap-6 flex-wrap">
                 <MeterCard isLoading={isLoading} heading={"Air Quality"} reading={data ? data.AIRQUALITY : 80}/>
