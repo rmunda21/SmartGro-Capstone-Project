@@ -9,31 +9,63 @@ import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const HistoryList = () => {
-  const { startOfWeek, endOfWeek } = getStartAndEndOfWeek();
-  const { startOfDay, endOfDay } = getStartAndEndOfDay();
-  const [humidityValues, setHumidityValues] = useState([]);
+  const { startOfDay, endOfDay } = getStartAndEndOfDay()
+
+  const [humidityValues, setHumidityValues] = useState([])
+  const [tempValues, setTempValues] = useState([])
+  const [airQualityValues, setAirQualityValues] = useState([])
+  const [heatIndexValues, setHeatIndexValues] = useState([])
+  const [soilMoistureValues, setSoilMoistureValues] = useState([])
 
   useEffect(() => {
     fetchHistory();
   }, []);
 
-  useEffect(() => {
-    console.log("Humidity", humidityValues)
-  }, [humidityValues]);
-
   const fetchHistory = () => {
     const historyAPI = new APIEndpoint();
-    historyAPI.get(`graph/${startOfDay}/${startOfDay+4000}/Humidity`)
+    historyAPI.get(`graph/${startOfDay}/${endOfDay}/Humidity`)
       .then((res) => {
-        // if (res.data) {
-        //   // console.log(res.data)
-         
-        // }
-        console.log(res.data)
-        const values = res.data.map(obj => Number(obj.value.toFixed(2)));
-        setHumidityValues(values);
-        console.log(humidityValues)
-        
+        if (res.data) {
+          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          setHumidityValues(values)
+          console.log(values)
+        }
+      })
+      .catch(err => console.log(err));
+      historyAPI.get(`graph/${startOfDay}/${endOfDay}/Temperature`)
+      .then((res) => {
+        if (res.data) {
+          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          setTempValues(values)
+          console.log(values)
+        }
+      })
+      .catch(err => console.log(err));
+      historyAPI.get(`graph/${startOfDay}/${endOfDay}/AirQuality`)
+      .then((res) => {
+        if (res.data) {
+          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          setAirQualityValues(values)
+          console.log(values)
+        }
+      })
+      .catch(err => console.log(err));
+      historyAPI.get(`graph/${startOfDay}/${endOfDay}/HeatIndex`)
+      .then((res) => {
+        if (res.data) {
+          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          setHeatIndexValues(values)
+          console.log(values)
+        }
+      })
+      .catch(err => console.log(err));
+      historyAPI.get(`graph/${startOfDay}/${endOfDay}/SoilMoisture`)
+      .then((res) => {
+        if (res.data) {
+          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          setSoilMoistureValues(values)
+          console.log(values)
+        }
       })
       .catch(err => console.log(err));
   };
@@ -41,16 +73,21 @@ const HistoryList = () => {
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="flex flex-row gap-5">
-        <LineChart startOfDay= {startOfDay} endOfDay= {endOfDay} values={humidityValues} title={'Humidity(%)'} key={humidityValues.map((v,index)=>index)} />
+        <LineChart values={humidityValues ? humidityValues : []} title={'Humidity(%)'} />
+        <LineChart values={tempValues ? tempValues : []} title={'Temperature(°C)'} />
+      </div>
+      <div className="flex flex-row">
+        <LineChart values={airQualityValues ? airQualityValues : []} title={'Air Quality(VOC)'} />
+      </div>
+      <div className="flex flex-row gap-5">
+        <LineChart values={heatIndexValues ? heatIndexValues : []} title={'Heat Index(°C)'} />
+        <LineChart values={soilMoistureValues ? soilMoistureValues : []} title={'Soil Mositure(%)'} />
       </div>
     </div>
   );
 };
 
-const LineChart = ({ title, values, startOfDay, endOfDay}) => {
-  console.log("Values:", values)
- 
-
+const LineChart = ({ title, values }) => {
   return (
     <Card className="w-[100%]">
       <h1 className="font-bold text-lg">{title}</h1>
@@ -61,7 +98,7 @@ const LineChart = ({ title, values, startOfDay, endOfDay}) => {
         series={[
           {
             name: {title},
-            data: values,
+            data: values.length > 0 ? values : new Array(24).fill(0),
           },
         ]}
         options= {{
@@ -99,8 +136,7 @@ const LineChart = ({ title, values, startOfDay, endOfDay}) => {
                 fontWeight: 400,
               },
             },
-            categories: [startOfDay,startOfDay+4000]
-            // Array.from({ length: 24 }, (_, i) => `${i}:00`),
+            categories: ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"],
           },
           yaxis: {
             labels: {
@@ -134,7 +170,6 @@ const LineChart = ({ title, values, startOfDay, endOfDay}) => {
           }
         }}
       />
-
     </Card>
   );
 }
