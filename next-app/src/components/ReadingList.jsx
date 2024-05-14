@@ -69,7 +69,8 @@ const ReadingList = () => {
                     'HEATINGSTATUS': data.HEATINGSTATUS,
                     'COOLINGSTATUS': data.COOLINGSTATUS,
                     'LIGHTSTATUS': data.LIGHTSTATUS,
-                    'PUMPSTATUS': data.PUMPSTATUS
+                    'PUMPSTATUS': data.PUMPSTATUS,
+                    'AUTOSTATUS': data.AUTOSTATUS
                 }}
                 onToggle={mqttClient ? mqttClient : null}
                 />

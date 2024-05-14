@@ -23,8 +23,8 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
          <div className="flex flex-col">
                <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Auto</h4>
-                  <Switch checked={toString(statuses.AUTOSTATUS) === "ON" ?  true : false} onCheckedChange={()=>handleToggle("auto",
-                     toString(statuses.AUTOSTATUS) === "ON" ? false : true
+                  <Switch checked={statuses.AUTOSTATUS === "ON" ?  true : false} onCheckedChange={()=>handleToggle("auto",
+                     statuses.AUTOSTATUS === "ON" ? false : true
                   )} />
                </div>
                <p>
