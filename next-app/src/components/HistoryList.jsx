@@ -10,22 +10,29 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const HistoryList = () => {
   const { startOfWeek, endOfWeek } = getStartAndEndOfWeek();
-  const { startOfDay, endOfDay } = getStartAndEndOfDay()
-  const [humidityValues, setHumidityValues] = useState([])
+  const { startOfDay, endOfDay } = getStartAndEndOfDay();
+  const [humidityValues, setHumidityValues] = useState([]);
 
   useEffect(() => {
     fetchHistory();
   }, []);
 
+  useEffect(() => {
+    console.log("Humidity", humidityValues)
+  }, [humidityValues]);
+
   const fetchHistory = () => {
     const historyAPI = new APIEndpoint();
-    historyAPI.get(`graph/${startOfDay}/${endOfDay}/Humidity`)
+    historyAPI.get(`graph/${startOfDay}/${startOfDay+4000}/Humidity`)
       .then((res) => {
-        if (res.data) {
-          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
-          setHumidityValues([10,20,30,40,50,60,70])
-          console.log(values)
-        }
+        // if (res.data) {
+        //   // console.log(res.data)
+         
+        // }
+        console.log(res.data)
+        const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+        setHumidityValues(values);
+        console.log(humidityValues)
         
       })
       .catch(err => console.log(err));
@@ -34,13 +41,16 @@ const HistoryList = () => {
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="flex flex-row gap-5">
-        <LineChart values={humidityValues ? humidityValues : []} title={'Humidity(%)'} />
+        <LineChart startOfDay= {startOfDay} endOfDay= {endOfDay} values={humidityValues} title={'Humidity(%)'} key={humidityValues.map((v,index)=>index)} />
       </div>
     </div>
   );
 };
 
-const LineChart = ({ title, values }) => {
+const LineChart = ({ title, values, startOfDay, endOfDay}) => {
+  console.log("Values:", values)
+ 
+
   return (
     <Card className="w-[100%]">
       <h1 className="font-bold text-lg">{title}</h1>
@@ -89,7 +99,8 @@ const LineChart = ({ title, values }) => {
                 fontWeight: 400,
               },
             },
-            categories: ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"],
+            categories: [startOfDay,startOfDay+4000]
+            // Array.from({ length: 24 }, (_, i) => `${i}:00`),
           },
           yaxis: {
             labels: {
@@ -123,7 +134,7 @@ const LineChart = ({ title, values }) => {
           }
         }}
       />
-      {/* <Chart key={JSON.stringify(config.series[0].data)} {...config} /> */}
+
     </Card>
   );
 }
