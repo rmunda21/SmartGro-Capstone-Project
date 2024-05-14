@@ -1,7 +1,7 @@
 import LineChart from "./LineChart";
 
 const HistoryList = () => {
-
+    
     const HumidityChartConfig = {
         type: "line",
         height: 240,
