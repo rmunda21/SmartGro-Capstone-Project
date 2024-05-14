@@ -22,9 +22,11 @@ const HistoryList = () => {
       .then((res)=>{
         if (res.data){
           // time value
-          setHumidityValues(res.data.map(obj => obj["value"]))
+          const t = res.data.map(obj => obj.value)
+          console.log(t)
+          setHumidityValues(t)
         }
-        console.log(res.data)
+        // console.log(res.data)
       })
       .catch(err=>console.log(err))
     }
