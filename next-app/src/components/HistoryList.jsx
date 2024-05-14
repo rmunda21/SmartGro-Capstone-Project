@@ -18,7 +18,7 @@ const HistoryList = () => {
       
       console.log(startOfWeek, endOfWeek)
       const historyAPI = new APIEndpoint()
-      historyAPI.get(`/api/graph/${startOfWeek}/${endOfWeek}/Humidity`)
+      historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
       .then((res)=>{
         console.log(res)
       })
@@ -32,7 +32,7 @@ const HistoryList = () => {
         series: [
           {
             name: "Humidity",
-            data: [25, 30, 35],
+            data: [40,50,60,70,80,90,100],
           },
         ],
         options: {
@@ -113,14 +113,14 @@ const HistoryList = () => {
         },
     };
 
-    const AirPressureChartConfig = {
+    const AirQualityChartConfig = {
     type: "line",
     height: 240,
     width: "100%",
     series: [
         {
-        name: "Air Pressure",
-        data: [25, 30, 35],
+        name: "Air Quality",
+        data: [0, 50, 100, 150, 200, 300, 500],
         },
     ],
     options: {
@@ -208,7 +208,7 @@ const HistoryList = () => {
     series: [
         {
         name: "Temperature",
-        data: [25, 30, 35],
+        data: [20, 25, 30, 35, 40],
         },
     ],
     options: {
@@ -296,7 +296,7 @@ const HistoryList = () => {
     series: [
         {
         name: "Heat Index",
-        data: [25, 30, 35],
+        data: [20, 25, 30, 35, 40],
         },
     ],
     options: {
@@ -384,7 +384,7 @@ const HistoryList = () => {
     series: [
         {
         name: "Soil Moisture",
-        data: [25, 30, 35],
+        data: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
         },
     ],
     options: {
@@ -472,7 +472,7 @@ const HistoryList = () => {
                 <LineChart config={TemperatureChartConfig} title={'Temperature(°C)'} />
             </div>
             <div className="w-full flex flex-col">
-                <LineChart config={AirPressureChartConfig} title={'Air Pressure(Pa)'} />
+                <LineChart config={AirQualityChartConfig} title={'Air Quality(VOC)'} />
             </div>
             <div className="flex flex-row gap-5">
                 <LineChart config={HeatIndexChartConfig} title={'Heat Index(°C)'} />
