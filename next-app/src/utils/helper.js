@@ -44,7 +44,7 @@ export function getStartAndEndOfHour() {
   const now = new Date();
 
   // Get the start time one hour before the current time
-  const startOfHour = new Date(now.getTime() - (60 * 60 * 1000));
+  const startOfHour = new Date(now.getTime() - (30 * 60 * 1000));
 
   // Get the current time
   const endOfHour = new Date(now);
