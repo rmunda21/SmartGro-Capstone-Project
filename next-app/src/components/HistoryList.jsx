@@ -26,7 +26,6 @@ const HistoryList = () => {
           console.log(t)
           setHumidityValues(t)
         }
-        // console.log(res.data)
       })
       .catch(err=>console.log(err))
     }
@@ -474,7 +473,7 @@ const HistoryList = () => {
     return ( 
         <div className="w-full flex flex-col gap-5">
             <div className="flex flex-row gap-5">
-                <LineChart config={HumidityChartConfig} title={'Humidity(%)'} />
+                <LineChart values={humidityValues} config={HumidityChartConfig} title={'Humidity(%)'} />
                 <LineChart config={TemperatureChartConfig} title={'Temperature(°C)'} />
             </div>
             <div className="w-full flex flex-col">
