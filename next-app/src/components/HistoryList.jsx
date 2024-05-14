@@ -20,7 +20,11 @@ const HistoryList = () => {
       const historyAPI = new APIEndpoint()
       historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
       .then((res)=>{
-        console.log(res)
+        if (res.data){
+          // time value
+          setHumidityValues(res.data.map(obj => obj.value))
+        }
+        console.log(res.data)
       })
       .catch(err=>console.log(err))
     }
@@ -32,7 +36,7 @@ const HistoryList = () => {
         series: [
           {
             name: "Humidity",
-            data: [40,50,60,70,80,90,100],
+            data: humidityValues,
           },
         ],
         options: {
