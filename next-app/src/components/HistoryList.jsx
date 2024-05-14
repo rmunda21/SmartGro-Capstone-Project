@@ -115,9 +115,10 @@ const HistoryList = () => {
               ...prevConfig,
               series: [{ ...prevConfig.series[0], data: values }]
             };
-            console.log("Updated config:", newConfig); // Debugging log
+            console.log("Updated config:", newConfig.series[0].data); // Debugging log
             return newConfig;
           });
+          console.log(humidityConfig.series[0].data); // Debugging log
         }
       })
       .catch(err => console.log(err));
