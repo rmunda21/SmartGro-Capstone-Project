@@ -56,11 +56,28 @@ export function getStartAndEndOfHour() {
 }
 
 export function convertTimestampsToTimeStrings(timestamps) {
-  console.log(timestamps)
   return timestamps.map(timestamp => {
-    const date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+    const date = new Date(timestamp * 1000); // Convert to milliseconds
+    const hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes();
+    
+    minutes = Math.round(minutes / 30) * 30;
+    
+    if (minutes === 60) {
+      minutes = 0;
+      date.setHours(date.getHours() + 1);
+    }
+
+    return `${hours}:${minutes.toString().padStart(2, '0')}`;
   });
 }
+
+// export function convertTimestampsToTimeStrings(timestamps) {
+//   console.log(timestamps)
+//   return timestamps.map(timestamp => {
+//     const date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+//     const hours = String(date.getHours()).padStart(2, '0');
+//     const minutes = String(date.getMinutes()).padStart(2, '0');
+//     return `${hours}:${minutes}`;
+//   });
+// }
