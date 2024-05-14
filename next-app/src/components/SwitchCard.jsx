@@ -22,15 +22,11 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
       return (
          <div className="flex flex-col">
                <div className='flex flex-row justify-between p-5'>
-                  <h4 className="font-bold text-slate-600 text-lg">Auto</h4>
+                  <h4 className="font-bold text-slate-600 text-lg">Auto Mode</h4>
                   <Switch checked={statuses.AUTOSTATUS === "ON" ?  true : false} onCheckedChange={()=>handleToggle("auto",
                      statuses.AUTOSTATUS === "ON" ? false : true
                   )} />
                </div>
-               <p>
-               {statuses.AUTOSTATUS === "ON" }
-               </p>
-              
                <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Cooling Status</h4>
                   <Switch checked={statuses.COOLINGSTATUS === "ON" ? true : false} disabled/>
@@ -41,13 +37,13 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
                </div>
                <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Light</h4>
-                  <Switch checked={statuses.LIGHTSTATUS === "ON" ? true : false} onCheckedChange={()=>handleToggle("lighting",
+                  <Switch disabled={statuses.AUTOSTATUS === "ON" ? true : false} checked={statuses.LIGHTSTATUS === "ON" ? true : false} onCheckedChange={()=>handleToggle("lighting",
                      statuses.LIGHTSTATUS === "ON" ? false : true
                   )} />
                </div>
                <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Pump</h4>
-                  <Switch checked={statuses.PUMPSTATUS === "ON" ? true : false} onCheckedChange={()=>handleToggle("pump",
+                  <Switch disabled={statuses.AUTOSTATUS === "ON" ? true : false} checked={statuses.PUMPSTATUS === "ON" ? true : false} onCheckedChange={()=>handleToggle("pump",
                      statuses.PUMPSTATUS === "ON" ? false : true
                   )} />
                </div>

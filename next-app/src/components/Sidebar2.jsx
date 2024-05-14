@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { APIEndpoint } from "@/utils/api";
 import { useRouter } from "next/navigation";
+import { AboutFooter } from "./Footer";
 
 export function DefaultSidebar() {
   const router = useRouter();
@@ -86,7 +87,9 @@ export function DefaultSidebar() {
           </ListItemPrefix>
           Log Out
         </ListItem>
+        
       </List>
+      <AboutFooter />
     </Card>
   );
 }
