@@ -6,6 +6,7 @@ def get_crop_data(cropname: str):
         collection = db['CropData']
         crop_data = collection.find_one({},{cropname.lower()})
         crop_data.pop('_id')
+        print(crop_data)
         
         # print(crop_data)
         if crop_data:

@@ -46,12 +46,13 @@ def get_user_data(username):
         db = connect_to_mongodb()
         collection = db['UserData']
         user_data = collection.find_one({'username': username})
+        user_data.pop('_id')
         if user_data:
             return user_data
         else:
             return False
     except Exception as e:
-        print(e)
+        print("error",e.__traceback__.tb_lineno,e)
         return None
 
 def get_user_data_from_session(session_id):

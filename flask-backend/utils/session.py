@@ -30,4 +30,5 @@ class CustomSession():
         db = connect_to_mongodb()
         collection = db['SessionData']
         session_data = collection.find_one({"session_id":session_id})
+        session_data.pop('_id')
         return session_data if session_data else None

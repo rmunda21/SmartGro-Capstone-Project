@@ -100,7 +100,10 @@ def get_user():
             session_data = CustomSession.get_session(session_id)
             # If session data is present then the user is authenticated
             if session_data:
-                username = session_data['username']
+                
+                # print(session_data)
+                username = session_data['data']['username']
+             
                 user_data = get_user_data(username=username)
                 if user_data:   
                     return make_response({'message': 'success', 'data': user_data}, 200)
@@ -108,7 +111,7 @@ def get_user():
                     return make_response({'message': 'User data not found'}, 400)
             return make_response({'message': 'Not authenticated for this route'}, 400)
     except Exception as e:
-        print(e)
+        print("error",e.__traceback__.tb_lineno,e)
         return make_response({'message': 'error'}, 400)
 
     
