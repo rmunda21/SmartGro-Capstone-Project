@@ -26,7 +26,7 @@ const HistoryList = () => {
       historyAPI.get(`graph/${startOfHour}/${endOfHour}/Humidity`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
+          const values = res.data.sort((a, b) => a.time - b.time);
           setHumidityValues(values)
           console.log(values)
         }
@@ -35,7 +35,7 @@ const HistoryList = () => {
       historyAPI.get(`graph/${startOfHour}/${endOfHour}/Temperature`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
+          const values = res.data.sort((a, b) => a.time - b.time);
           setTempValues(values)
           console.log(values)
         }
@@ -44,7 +44,7 @@ const HistoryList = () => {
       historyAPI.get(`graph/${startOfHour}/${endOfHour}/AirQuality`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
+          const values = res.data.sort((a, b) => a.time - b.time);
           setAirQualityValues(values)
           console.log(values)
         }
@@ -53,7 +53,7 @@ const HistoryList = () => {
       historyAPI.get(`graph/${startOfHour}/${endOfHour}/HeatIndex`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
+          const values = res.data.sort((a, b) => a.time - b.time);
           setHeatIndexValues(values)
           console.log(values)
         }
@@ -62,7 +62,7 @@ const HistoryList = () => {
       historyAPI.get(`graph/${startOfHour}/${endOfHour}/SoilMoisture`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
+          const values = res.data.sort((a, b) => a.time - b.time);
           setSoilMoistureValues(values)
           console.log(values)
         }
@@ -136,7 +136,7 @@ const LineChart = ({ title, values }) => {
                 fontWeight: 400,
               },
             },
-            categories: convertTimestampsToTimeStrings(values.map(obj => obj.timestamp)),
+            categories: convertTimestampsToTimeStrings(values.map(obj => obj.time)),
           },
           yaxis: {
             labels: {
