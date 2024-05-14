@@ -100,7 +100,8 @@ def get_user():
             session_data = CustomSession.get_session(session_id)
             # If session data is present then the user is authenticated
             if session_data:
-                user_data = get_user_data(session_id)
+                username = session_data['username']
+                user_data = get_user_data(username=username)
                 if user_data:   
                     return make_response({'message': 'success', 'data': user_data}, 200)
                 else:
