@@ -5,10 +5,99 @@ import LineChart from "./LineChart";
 import { getStartAndEndOfWeek } from "@/utils/helper";
 import { useEffect, useState } from "react";
 
+const HumidityChartConfig = {
+  type: "line",
+  height: 240,
+  width: "100%",
+  series: [
+    {
+      name: "Humidity",
+      data: [10, 20],
+    },
+  ],
+  options: {
+    chart: {
+      toolbar: {
+        show: false,
+      },
+    },
+    title: {
+      show: "",
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    colors: ["#1ecbe1"],
+    stroke: {
+      lineCap: "round",
+      curve: "smooth",
+    },
+    markers: {
+      size: 0,
+    },
+    xaxis: {
+      axisTicks: {
+        show: false,
+      },
+      axisBorder: {
+        show: false,
+      },
+      labels: {
+        style: {
+          colors: "#616161",
+          fontSize: "12px",
+          fontFamily: "inherit",
+          fontWeight: 400,
+        },
+      },
+      categories: [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thr",
+        "Fri",
+        "Sat",
+        "Sun",
+      ],
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: "#616161",
+          fontSize: "12px",
+          fontFamily: "inherit",
+          fontWeight: 400,
+        },
+      },
+    },
+    grid: {
+      show: true,
+      borderColor: "#dddddd",
+      strokeDashArray: 5,
+      xaxis: {
+        lines: {
+          show: true,
+        },
+      },
+      padding: {
+        top: 5,
+        right: 20,
+      },
+    },
+    fill: {
+      opacity: 0.8,
+    },
+    tooltip: {
+      theme: "dark",
+    },
+  },
+};
+
 const HistoryList = () => {
     const { startOfWeek, endOfWeek } = getStartAndEndOfWeek()
 
     const [humidityValues, setHumidityValues] = useState([])
+    const [humidityConfig, setHumidityConfig] = useState(HumidityChartConfig)
 
     useEffect(()=>{
       fetchHistory()
@@ -20,103 +109,27 @@ const HistoryList = () => {
       const historyAPI = new APIEndpoint()
       historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
       .then((res)=>{
-        if (res.data){
-          // time value
-          const t = res.data.map(obj => Number(obj.value.toFixed(2)))
-          console.log(t)
-          setHumidityValues(t)
-        }
+
+        if (res.data) {
+          const t = res.data.map(obj => Number(obj.value.toFixed(2)));
+          setHumidityValues(t);
+
+          setHumidityConfig(prevConfig => ({
+              ...prevConfig,
+              series: [
+                  {
+                      ...prevConfig.series[0],
+                      data: t
+                  }
+              ]
+          }));
+      }
+
       })
       .catch(err=>console.log(err))
     }
 
-    const HumidityChartConfig = {
-        type: "line",
-        height: 240,
-        width: "100%",
-        series: [
-          {
-            name: "Humidity",
-            data: [10, 20],
-          },
-        ],
-        options: {
-          chart: {
-            toolbar: {
-              show: false,
-            },
-          },
-          title: {
-            show: "",
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          colors: ["#1ecbe1"],
-          stroke: {
-            lineCap: "round",
-            curve: "smooth",
-          },
-          markers: {
-            size: 0,
-          },
-          xaxis: {
-            axisTicks: {
-              show: false,
-            },
-            axisBorder: {
-              show: false,
-            },
-            labels: {
-              style: {
-                colors: "#616161",
-                fontSize: "12px",
-                fontFamily: "inherit",
-                fontWeight: 400,
-              },
-            },
-            categories: [
-              "Mon",
-              "Tue",
-              "Wed",
-              "Thr",
-              "Fri",
-              "Sat",
-              "Sun",
-            ],
-          },
-          yaxis: {
-            labels: {
-              style: {
-                colors: "#616161",
-                fontSize: "12px",
-                fontFamily: "inherit",
-                fontWeight: 400,
-              },
-            },
-          },
-          grid: {
-            show: true,
-            borderColor: "#dddddd",
-            strokeDashArray: 5,
-            xaxis: {
-              lines: {
-                show: true,
-              },
-            },
-            padding: {
-              top: 5,
-              right: 20,
-            },
-          },
-          fill: {
-            opacity: 0.8,
-          },
-          tooltip: {
-            theme: "dark",
-          },
-        },
-    };
+   
 
     const AirQualityChartConfig = {
     type: "line",
@@ -473,7 +486,7 @@ const HistoryList = () => {
     return ( 
         <div className="w-full flex flex-col gap-5">
             <div className="flex flex-row gap-5">
-                <LineChart values={humidityValues} config={HumidityChartConfig} title={'Humidity(%)'} />
+                <LineChart config={HumidityChartConfig} title={'Humidity(%)'} />
                 <LineChart config={TemperatureChartConfig} title={'Temperature(°C)'} />
             </div>
             <div className="w-full flex flex-col">
