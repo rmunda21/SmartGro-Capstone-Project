@@ -49,7 +49,7 @@ const HomeList = () => {
         }
         else{
             return (
-                <h1 className="text-2xl font-bold">Welcome back {firstname}, lets see how your crops are doing!</h1>
+                <h10 className="text-2xl font-bold">Welcome back {firstname}, lets see how your crops are doing!</h10>
             )
         } 
     }
@@ -155,7 +155,7 @@ const HomeList = () => {
             <h1 className="text-lg font-bold text-gray-600">Recommendations for Crop</h1>
             <CropRecommendations cropData={cropRec} isLoading={isCropRecLoading} />
         </div>
-     );
+     ); 
 }
- 
+
 export default HomeList;
