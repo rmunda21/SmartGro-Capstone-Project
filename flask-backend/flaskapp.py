@@ -34,7 +34,7 @@ def register():
         user = register_user(username=username, croptype=croptype, quantity=quantity, password=password, firstname=firstname, lastname=lastname)
         if user:
             print("User added")
-            session_data = {'username': username, 'croptype': croptype, 'firstname': firstname, 'lastname': lastname}
+            session_data = {'username': user['username'], 'croptype': user['croptype'], 'quantity': user['quantity'], 'firstname': user['firstname'], 'lastname': user['lastname']}
             session_id = CustomSession.create_session(session_data)
             if not session_id:
                 raise Exception
@@ -58,7 +58,7 @@ def login():
         password = form_data['password']
         user = authenticate_user(username=username, password=password)
         if user:
-            session_data = {'username': user['username'], 'croptype': user['croptype'], 'firstname': user['firstname'], 'lastname': user['lastname']}
+            session_data = {'username': user['username'], 'croptype': user['croptype'], 'quantity': user['quantity'], 'firstname': user['firstname'], 'lastname': user['lastname']}
             session_id = CustomSession.create_session(session_data)
             if not session_id:
                 raise Exception

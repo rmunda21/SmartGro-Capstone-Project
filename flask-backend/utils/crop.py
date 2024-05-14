@@ -6,9 +6,10 @@ def get_crop_data(cropname):
         collection = db['CropData']
         crop_data = collection.find_one({},{cropname})
         crop_data.pop('_id')
+        
         print(crop_data)
         if crop_data:
-            return crop_data
+            return crop_data[cropname]
         return None
     except Exception as e:
         print(e)
