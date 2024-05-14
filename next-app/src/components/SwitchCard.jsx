@@ -22,6 +22,16 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
       return (
          <div className="flex flex-col">
                <div className='flex flex-row justify-between p-5'>
+                  <h4 className="font-bold text-slate-600 text-lg">Auto</h4>
+                  <Switch checked={toString(statuses.AUTOSTATUS) === "ON" ?  true : false} onCheckedChange={()=>handleToggle("auto",
+                     toString(statuses.AUTOSTATUS) === "ON" ? false : true
+                  )} />
+               </div>
+               <p>
+               {statuses.AUTOSTATUS === "ON" }
+               </p>
+              
+               <div className='flex flex-row justify-between p-5'>
                   <h4 className="font-bold text-slate-600 text-lg">Cooling Status</h4>
                   <Switch checked={statuses.COOLINGSTATUS === "ON" ? true : false} disabled/>
                </div>
@@ -41,6 +51,8 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
                      statuses.PUMPSTATUS === "ON" ? false : true
                   )} />
                </div>
+
+
             </div>
       )
    }
@@ -56,6 +68,16 @@ const SwitchCard = ({onToggle, statuses, isLoading}) => {
          const byteArray = Buffer.from(message, 'utf-8')
          onToggle.publish('G_Pro_1', byteArray)
       }
+      else if(status === "auto"){
+         const message = JSON.stringify({
+            Type: "SWITCH",
+            status: "AUTOSTATUS",
+            requested_state: state
+         })
+         const byteArray = Buffer.from(message, 'utf-8')
+         onToggle.publish('G_Pro_1', byteArray)
+
+         }
       else{
          const message = JSON.stringify({
             Type: "SWITCH",
