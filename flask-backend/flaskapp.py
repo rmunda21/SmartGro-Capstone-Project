@@ -155,10 +155,10 @@ def update_crop_data():
             # If session data is present then the user is authenticated
             if session_data:
                 form_data = request.form
-                print(form_data)
+                # print(form_data)
                 # username = eval(session_data).get('username')
                 username  = session_data["data"]['username']
-                print(username)
+                # print(username)
                 selected_crop = form_data['croptype']
                 quantity = form_data['quantity']
                 crop_data = update_user_crop_type(username=username, new_crop_type=selected_crop, quantity=quantity)
