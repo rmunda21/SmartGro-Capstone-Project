@@ -92,6 +92,7 @@ const LineChart = ({ title, values }) => {
     <Card className="w-[100%]">
       <h1 className="font-bold text-lg">{title}</h1>
       <Chart
+
         type={"line"}
         height={240}
         width={"100%"}
@@ -106,6 +107,11 @@ const LineChart = ({ title, values }) => {
             toolbar: {
               show: false,
             },
+            zoom:{
+              type: 'x',
+              enabled: true,
+              autoScaleYaxis: true
+            }
           },
           title: {
             show: "",
