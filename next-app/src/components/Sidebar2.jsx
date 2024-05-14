@@ -32,30 +32,38 @@ import { useRouter } from "next/navigation";
           </Typography>
         </div>
         <List>
+        <Link href={"/dashboard/home"}>
           <ListItem>
             <ListItemPrefix>
               <HomeIcon className="h-5 w-5" />
             </ListItemPrefix>
-            <Link href={"/dashboard/home"}>Home</Link>
+            Home
           </ListItem>
+          </Link>
+          <Link href={"/dashboard/live-readings"}>
           <ListItem>
             <ListItemPrefix>
               <TableCellsIcon className="h-5 w-5" />
             </ListItemPrefix>
-            <Link href={"/dashboard/live-readings"}>Live Readings</Link>
+            Live Readings
           </ListItem>
+          </Link>
+          <Link href={"/dashboard/history"}>
           <ListItem>
             <ListItemPrefix>
               <ChartBarIcon className="h-5 w-5" />
             </ListItemPrefix>
-            <Link href={"/dashboard/history"}>History</Link>
+            History
           </ListItem>
+          </Link>
+          <Link href={"/dashboard/about"}>
           <ListItem>
             <ListItemPrefix>
               <InformationCircleIcon className="h-5 w-5" />
             </ListItemPrefix>
-            <Link href={"/dashboard/about"}>About</Link>
+            About
           </ListItem>
+          </Link>
           {/* <ListItem>
             <ListItemPrefix>
               <Cog6ToothIcon className="h-5 w-5" />

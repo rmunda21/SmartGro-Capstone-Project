@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
         <DefaultSidebar />
         <div className="p-5 w-full flex flex-col bg-gray-50 h-screen">
             <MyBreadcrumb />
-            <div className="mt-5 max-h-screen overflow-y-scroll">
+            <div className="mt-5 pb-5 max-h-screen overflow-auto">
                 {children}
             </div>    
         </div>

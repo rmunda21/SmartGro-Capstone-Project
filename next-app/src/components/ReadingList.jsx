@@ -1,5 +1,6 @@
 'use client'
 
+import ChangeCropForm from "./ChangeCropForm";
 import MeterGauge from "./Meter";
 import MeterCard from "./MeterCard";
 import MyReadingsCard from "./ReadingCard";
@@ -46,6 +47,8 @@ const ReadingList = () => {
 
     return ( 
         <div className="flex flex-col gap-6 flex-wrap">
+            <ChangeCropForm />
+            <h4 className="text-lg font-bold">Live Readings</h4>
             <div className="flex flex-row gap-6 flex-wrap">
                 <MyReadingsCard classname={"bg-cyan-50 border-cyan-100"} isLoading={isLoading} heading={"Humidity(%)"} reading={data ? data.HUMIDITY : "34.5"} image_src={"/images/humidity.png"}/>
                 <MyReadingsCard classname={"bg-yellow-50 border-yellow-100"} isLoading={isLoading} heading={"Temperature(°C)"} reading={data ? data.TEMPERATURE: "31"} image_src={"/images/temperature.png"}/>
