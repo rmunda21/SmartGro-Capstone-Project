@@ -56,21 +56,50 @@ export function getStartAndEndOfHour() {
 }
 
 export function convertTimestampsToTimeStrings(timestamps) {
-  return timestamps.map(timestamp => {
-    const date = new Date(timestamp * 1000); // Convert to milliseconds
-    const hours = date.getHours().toString().padStart(2, '0');
-    let minutes = date.getMinutes();
-    
-    minutes = Math.round(minutes / 30) * 30;
-    
-    if (minutes === 60) {
-      minutes = 0;
-      date.setHours(date.getHours() + 1);
-    }
+  const minTimestamp = Math.min(...timestamps);
+  const maxTimestamp = Math.max(...timestamps);
+  
+  // Calculate the time interval between timestamps in milliseconds
+  const interval = (maxTimestamp - minTimestamp) / timestamps.length;
 
-    return `${hours}:${minutes.toString().padStart(2, '0')}`;
-  });
+  // Calculate the time interval in minutes
+  const intervalInMinutes = interval / (1000 * 60);
+
+  // Define the interval for displaying time strings (e.g., every 30 minutes)
+  const displayInterval = 30; // Change this value to adjust the interval
+
+  // Generate time strings based on the display interval
+  const timeStrings = [];
+  let currentTimestamp = minTimestamp;
+  while (currentTimestamp <= maxTimestamp) {
+    const date = new Date(currentTimestamp * 1000); // Convert to milliseconds
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    timeStrings.push(`${hours}:${minutes}`);
+
+    // Move to the next timestamp based on the display interval
+    currentTimestamp += displayInterval * 60 * 1000; // Convert minutes to milliseconds
+  }
+
+  return timeStrings;
 }
+
+// export function convertTimestampsToTimeStrings(timestamps) {
+//   return timestamps.map(timestamp => {
+//     const date = new Date(timestamp * 1000); // Convert to milliseconds
+//     const hours = date.getHours().toString().padStart(2, '0');
+//     let minutes = date.getMinutes();
+    
+//     minutes = Math.round(minutes / 30) * 30;
+    
+//     if (minutes === 60) {
+//       minutes = 0;
+//       date.setHours(date.getHours() + 1);
+//     }
+
+//     return `${hours}:${minutes.toString().padStart(2, '0')}`;
+//   });
+// }
 
 // export function convertTimestampsToTimeStrings(timestamps) {
 //   console.log(timestamps)

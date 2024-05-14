@@ -110,7 +110,7 @@ const LineChart = ({ title, values }) => {
             zoom:{
               type: 'x',
               enabled: true,
-              autoScaleYaxis: true
+              autoScaleYaxis: true,
             }
           },
           title: {
