@@ -12,7 +12,7 @@ def register_user(username: str, croptype: str, quantity: int, password: str, fi
         user = collection.insert_one({
             'username': username,
             'croptype': croptype.lower(),
-            'quantity': quantity,
+            'quantity': int(quantity),
             'hash_password': generate_password_hash(password=password),
             'firstname': firstname,
             'lastname': lastname,
