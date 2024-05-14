@@ -102,6 +102,10 @@ const HistoryList = () => {
     fetchHistory();
   }, []);
 
+  useEffect(() => {
+    console.log("Humidity config updated:", humidityConfig);
+  }, [humidityConfig]);
+
   const fetchHistory = () => {
     const historyAPI = new APIEndpoint();
     historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
@@ -215,7 +219,7 @@ const HistoryList = () => {
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="flex flex-row gap-5">
-        <LineChart config={humidityConfig} title={'Humidity(%)'} />
+        <LineChart key={JSON.stringify(humidityConfig.series[0].data)} config={humidityConfig} title={'Humidity(%)'} />
         <LineChart config={otherChartConfig} title={'Temperature(°C)'} />
       </div>
       <div className="w-full flex flex-col">
