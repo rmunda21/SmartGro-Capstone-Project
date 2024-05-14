@@ -6,3 +6,21 @@ export function autoCapitalize(str) {
       })                        
       .join(' ');               
   }
+
+export function getStartAndEndOfWeek() {
+  const now = new Date();
+  
+  // Get the start of the week (Sunday)
+  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  // Get the end of the week (Saturday)
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  return {
+    startOfWeek: startOfWeek.getTime(),
+    endOfWeek: endOfWeek.getTime()
+  };
+}
