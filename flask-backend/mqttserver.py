@@ -49,10 +49,6 @@ def on_message(client, userdata, msg):
     data = json.loads(msg.payload.decode())
     # print(data)
     
-    # Connect to MongoDB
-    # client = MongoClient(mongo_host, mongo_port) # for local host
-    # client = MongoClient(uri, server_api=ServerApi('1')) # for cloud
-    # db = client[mongo_db]
     db = connect_to_mongodb()
     collection = db[mongo_collection]
     crop = db[crop_data_collection]
@@ -72,20 +68,26 @@ def on_message(client, userdata, msg):
     # Read from MongoDB
     cropType = user["croptype"]
     # print(cropType)
-    temperature = crop.find_one({}, { f"{cropType}.temperature": 1 })
-    temperature = temperature[cropType]['temperature']
+    crop_data = crop.find_one({},{cropType})
+    # print(crop_data)
+    crop_data.pop('_id')
+    # print(crop_data)    
+    temperature = crop_data[cropType]['temperature']
+    # print(temperature)
+
+    rain = crop_data[cropType]['rainfall']
+    potassium = crop_data[cropType]['K']
+    nitrogen = crop_data[cropType]['N']
+    phosphorus = crop_data[cropType]['P']
     
-    rain = crop.find_one({}, { f"{cropType}.rainfall": 1 })
-    rain = rain[cropType]['rainfall']
-    
-    potassium = crop.find_one({}, { f"{cropType}.K": 1 })
-    potassium = potassium[cropType]['K']
-    
-    nitrogen = crop.find_one({}, { f"{cropType}.N": 1 })
-    nitrogen = nitrogen[cropType]['N']
-    
-    phosphorus = crop.find_one({}, { f"{cropType}.P": 1 })
-    phosphorus = phosphorus[cropType]['P']
+    # rain = crop.find_one({}, { f"{cropType}.rainfall": 1 })
+    # rain = rain[cropType]['rainfall']
+    # potassium = crop.find_one({}, { f"{cropType}.K": 1 })
+    # potassium = potassium[cropType]['K']
+    # nitrogen = crop.find_one({}, { f"{cropType}.N": 1 })
+    # nitrogen = nitrogen[cropType]['N']
+    # phosphorus = crop.find_one({}, { f"{cropType}.P": 1 })
+    # phosphorus = phosphorus[cropType]['P']
     
     # print(potassium)
     
@@ -106,7 +108,7 @@ def on_message(client, userdata, msg):
     print("Data inserted into MongoDB")
     
   except Exception as e:
-    print(str(e))
+    print("error",e.__traceback__.tb_lineno,str(e))
 
 # Create MQTT client
 client = mqtt.Client()

@@ -7,7 +7,7 @@ def get_crop_data(cropname):
         crop_data = collection.find_one({},{cropname})
         crop_data.pop('_id')
         
-        print(crop_data)
+        # print(crop_data)
         if crop_data:
             return crop_data[cropname]
         return None
