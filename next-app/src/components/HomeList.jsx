@@ -1,7 +1,7 @@
 'use client'
 
 import { APIEndpoint } from "@/utils/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import { Card } from "flowbite-react";
 
@@ -11,27 +11,34 @@ const HomeList = () => {
     const [userData, setUserData] = useState({})
     const [cropRec, setCropRec] = useState(null)
 
-    const userAPI = new APIEndpoint()
-    userAPI.get('user/')
-    .then((res)=>{
-        setUserData(res.data)
-        console.log(res)
-    })
-    .catch(err=>console.log(err))
-    .finally(()=>{
-        setIsLoading(false)
-    })
+    useEffect(()=>{
+        const userAPI = new APIEndpoint()
 
-    const cropRecommendationAPI = new APIEndpoint()
-    cropRecommendationAPI.get('crop_data/')
-    .then((res)=>{
-        setCropRec(res.data)
-        console.log(res)
-    })
-    .catch(err=>console.log(err))
-    .finally(()=>{
-        setCropRecLoading(false)
-    })
+        userAPI.get('user/')
+        .then((res)=>{
+            setUserData(res.data)
+            console.log(res)
+        })
+        .catch(err=>console.log(err))
+        .finally(()=>{
+            setIsLoading(false)
+        })
+    }, [])
+
+    useEffect(()=>{
+        const cropRecommendationAPI = new APIEndpoint()
+        cropRecommendationAPI.get('crop_data/')
+        .then((res)=>{
+            setCropRec(res.data)
+            console.log(res)
+        })
+        .catch(err=>console.log(err))
+        .finally(()=>{
+            setCropRecLoading(false)
+        })
+    }, [])
+
+    
 
     function WelcomeUser({firstname="Guest", isLoading}){
         if (isLoading){
