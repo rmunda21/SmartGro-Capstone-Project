@@ -4,6 +4,7 @@ import { APIEndpoint } from "@/utils/api";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import { Card } from "flowbite-react";
+import { autoCapitalize } from "@/utils/helper";
 
 const HomeList = () => {
     const [isLoading, setIsLoading] = useState(true)
@@ -69,7 +70,7 @@ const HomeList = () => {
                     <Card className={`w-[350px] flex-grow bg-green-50 border-green-100`}>
                         <h4 className="font-bold text-slate-600 text-sm">Crop Type</h4>
                         <div className="flex flex-row justify-between items-center">
-                            <p className="text-slate-500 text-3xl font-bold">{cropType ? cropType : "Mango"}</p>
+                            <p className="text-slate-500 text-3xl font-bold">{cropType ? autoCapitalize(cropType) : "Mango"}</p>
                             <img width={32} src='/images/plant.png' alt="Crop Image" />
                         </div>
                     </Card>
