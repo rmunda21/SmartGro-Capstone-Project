@@ -1,7 +1,30 @@
+'use client'
+
+import { APIEndpoint } from "@/utils/api";
 import LineChart from "./LineChart";
+import { getStartAndEndOfWeek } from "@/utils/helper";
+import { useEffect, useState } from "react";
 
 const HistoryList = () => {
-    
+    const { startOfWeek, endOfWeek } = getStartAndEndOfWeek()
+
+    const [humidityValues, setHumidityValues] = useState([])
+
+    useEffect(()=>{
+      fetchHistory()
+    }, [])
+
+    const fetchHistory = () =>{
+      
+      console.log(startOfWeek, endOfWeek)
+      const historyAPI = new APIEndpoint()
+      historyAPI.get(`/api/graph/${startOfWeek}/${endOfWeek}/Humidity`)
+      .then((res)=>{
+        console.log(res)
+      })
+      .catch(err=>console.log(err))
+    }
+
     const HumidityChartConfig = {
         type: "line",
         height: 240,
