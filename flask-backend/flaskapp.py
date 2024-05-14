@@ -170,6 +170,22 @@ def update_crop_data():
     except Exception as e:
         print(e)
         return make_response({'message': 'error'}, 400)
+    
+@app.route('/api/graph/<start>/<end>/<variable>', methods=['GET'])
+def graph(start,end,variable):
+    try:
+        db = connect_to_mongodb()
+        farmhistory = db['FarmData']
+        result = list(farmhistory.aggregate([ { '$match': { 'TIMESTAMP': { '$gte': int(start), '$lte': int(end) } } }, { '$group': { '_id': None, 'FarmData': { '$push': { 'timestamp': '$TIMESTAMP', variable.upper() : f'${variable.upper()}' } } } }, { '$project': { '_id': 0 } } ]))
+        if(len(result)==0):
+            return make_response({'message': 'No data found'}, 400)
+        data = [{"time" : x['timestamp'],"value" : x.get(variable.upper())} for x in result[0]["FarmData"]] 
+        return make_response({'message': 'success', 'data': data}, 200)
+    
+    except Exception as e:
+        print("error",e.__traceback__.tb_lineno,e)
+        return make_response({'message': 'error'}, 400)  
+    
 
 # MongoDB settings
 uri = "mongodb+srv://andre:r8ViFc2453NZPFBL@farmdata.gv5ejiy.mongodb.net/?retryWrites=true&w=majority&appName=FarmData"
