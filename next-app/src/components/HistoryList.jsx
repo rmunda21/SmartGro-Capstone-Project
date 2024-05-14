@@ -103,7 +103,7 @@ const HistoryList = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Humidity config updated:", humidityConfig);
+    console.log("Humidity config updated:", humidityConfig.series[0].data);
   }, [humidityConfig]);
 
   const fetchHistory = () => {
