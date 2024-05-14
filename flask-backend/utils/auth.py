@@ -40,3 +40,16 @@ def authenticate_user(username: str, password: str):
     except Exception as e:
         print(e)
         return None
+
+def get_user(session_id):
+    try:
+        db = connect_to_mongodb()
+        collection = db['SessionData']
+        session_data = collection.find_one({'session_id': session_id})
+        if session_data:
+            user_data = session_data['data']
+            return user_data
+        return None
+    except Exception as e:
+        print(e)
+        return None

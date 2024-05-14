@@ -6,6 +6,7 @@ from flask import Flask, make_response, request
 from utils.db import connect_to_mongodb
 from utils.auth import register_user, authenticate_user
 from utils.session import CustomSession
+from utils.crop import get_crop_data, update_user_crop_type
 
 # from config import Config
 from collections import defaultdict
@@ -92,6 +93,24 @@ def verify_session():
         print(e)
         return make_response({'message': 'error'}, 400)
 
+@app.route('/api/user/', methods=['GET'])
+def get_user():
+    try:
+        if 'session_id' in session:
+            session_id = session['session_id']
+            session_data = CustomSession.get_session(session_id)
+            # If session data is present then the user is authenticated
+            if session_data:
+                user_data = get_user(session_id)
+                if user_data:   
+                    return make_response({'message': 'success', 'data': user_data}, 200)
+                else:
+                    return make_response({'message': 'User data not found'}, 400)
+            return make_response({'message': 'Not authenticated for this route'}, 400)
+    except Exception as e:
+        print(e)
+        return make_response({'message': 'error'}, 400)
+
     
 @app.route('/api/json', methods=["GET","POST"]) 
 def json_object(): 
@@ -105,6 +124,48 @@ def json_object():
         message = {"status":"POST request received"} 
         return jsonify(message) 
     return render_template('404.html'), 404
+
+@app.route('/api/crop_data/', methods=['GET'])
+def get_crop_data():
+    try:
+        if 'session_id' in session:
+            session_id = session['session_id']
+            session_data = CustomSession.get_session(session_id)
+            # If session data is present then the user is authenticated
+            if session_data:
+                crop_type = eval(session_data).get('croptype')
+                crop_data = get_crop_data(crop_type)
+                if crop_data:   
+                    return make_response({'message': 'success', 'data': crop_data}, 200)
+                else:
+                    return make_response({'message': 'Crop data not found'}, 400)
+            return make_response({'message': 'Not authenticated for this route'}, 400)
+    except Exception as e:
+        print(e)
+        return make_response({'message': 'error'}, 400)
+    
+@app.route('/api/crop_data/', methods=['POST'])
+def update_crop_data():
+    try:
+        if 'session_id' in session:
+            session_id = session['session_id']
+            session_data = CustomSession.get_session(session_id)
+            # If session data is present then the user is authenticated
+            if session_data:
+                form_data = request.form
+                print(form_data)
+                username = eval(session_data).get('username')
+                selected_crop = form_data['croptype']
+                quantity = form_data['quantity']
+                crop_data = update_user_crop_type(username=username, new_crop_type=selected_crop, quantity=quantity)
+                if crop_data:   
+                    return make_response({'message': 'success'}, 200)
+                else:
+                    return make_response({'message': 'Could not update crop type'}, 400)
+            return make_response({'message': 'Not authenticated for this route'}, 400)
+    except Exception as e:
+        print(e)
+        return make_response({'message': 'error'}, 400)
 
 # MongoDB settings
 uri = "mongodb+srv://andre:r8ViFc2453NZPFBL@farmdata.gv5ejiy.mongodb.net/?retryWrites=true&w=majority&appName=FarmData"
