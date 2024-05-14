@@ -18,12 +18,14 @@ const HistoryList = () => {
 
   const fetchHistory = () => {
     const historyAPI = new APIEndpoint();
-    historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
+    historyAPI.get(`graph/${Number(1715490000)}/${Number(1716491200)}/Humidity`)
       .then((res) => {
         if (res.data) {
           const values = res.data.map(obj => Number(obj.value.toFixed(2)));
           setHumidityValues(values)
+          console.log(values);
         }
+        
       })
       .catch(err => console.log(err));
   };
