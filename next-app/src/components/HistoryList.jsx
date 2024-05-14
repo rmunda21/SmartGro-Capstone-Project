@@ -19,7 +19,6 @@ const HistoryList = () => {
       // console.log(startOfWeek, endOfWeek)
       const historyAPI = new APIEndpoint()
       historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
-      historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
       .then((res)=>{
         console.log(res)
       })
