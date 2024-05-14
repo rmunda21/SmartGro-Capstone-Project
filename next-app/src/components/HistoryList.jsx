@@ -123,6 +123,7 @@ const HistoryList = () => {
                   }
               ]
           }));
+          console.log(humidityConfig.series[0].data)  
       }
 
       })
@@ -486,7 +487,7 @@ const HistoryList = () => {
     return ( 
         <div className="w-full flex flex-col gap-5">
             <div className="flex flex-row gap-5">
-                <LineChart config={HumidityChartConfig} title={'Humidity(%)'} />
+                <LineChart config={humidityConfig} title={'Humidity(%)'} />
                 <LineChart config={TemperatureChartConfig} title={'Temperature(°C)'} />
             </div>
             <div className="w-full flex flex-col">
