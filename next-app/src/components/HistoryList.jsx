@@ -88,7 +88,7 @@ const HistoryList = () => {
             theme: "dark",
           },
         },
-      };
+    };
 
     const AirPressureChartConfig = {
     type: "line",
@@ -441,8 +441,6 @@ const HistoryList = () => {
         },
     },
     };
-
-
 
     return ( 
         <div className="w-full flex flex-col gap-5">
