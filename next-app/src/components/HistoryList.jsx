@@ -1,7 +1,7 @@
 'use client'
 
 import { APIEndpoint } from "@/utils/api";
-import { getStartAndEndOfWeek, getStartAndEndOfDay } from "@/utils/helper";
+import { getStartAndEndOfHour, convertTimestampsToTimeStrings } from "@/utils/helper";
 import { useEffect, useState } from "react";
 import { Card } from "flowbite-react";
 import dynamic from "next/dynamic";
@@ -9,7 +9,7 @@ import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const HistoryList = () => {
-  const { startOfDay, endOfDay } = getStartAndEndOfDay()
+  const { startOfHour, endOfHour } = getStartAndEndOfHour()
 
   const [humidityValues, setHumidityValues] = useState([])
   const [tempValues, setTempValues] = useState([])
@@ -23,46 +23,46 @@ const HistoryList = () => {
 
   const fetchHistory = () => {
     const historyAPI = new APIEndpoint();
-    historyAPI.get(`graph/${startOfDay}/${endOfDay}/Humidity`)
+    historyAPI.get(`graph/${startOfHour}/${endOfHour}/Humidity`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
           setHumidityValues(values)
           console.log(values)
         }
       })
       .catch(err => console.log(err));
-      historyAPI.get(`graph/${startOfDay}/${endOfDay}/Temperature`)
+      historyAPI.get(`graph/${startOfHour}/${endOfHour}/Temperature`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
           setTempValues(values)
           console.log(values)
         }
       })
       .catch(err => console.log(err));
-      historyAPI.get(`graph/${startOfDay}/${endOfDay}/AirQuality`)
+      historyAPI.get(`graph/${startOfHour}/${endOfHour}/AirQuality`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
           setAirQualityValues(values)
           console.log(values)
         }
       })
       .catch(err => console.log(err));
-      historyAPI.get(`graph/${startOfDay}/${endOfDay}/HeatIndex`)
+      historyAPI.get(`graph/${startOfHour}/${endOfHour}/HeatIndex`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
           setHeatIndexValues(values)
           console.log(values)
         }
       })
       .catch(err => console.log(err));
-      historyAPI.get(`graph/${startOfDay}/${endOfDay}/SoilMoisture`)
+      historyAPI.get(`graph/${startOfHour}/${endOfHour}/SoilMoisture`)
       .then((res) => {
         if (res.data) {
-          const values = res.data.map(obj => Number(obj.value.toFixed(2)));
+          const values = res.data.sort((a, b) => a.timestamp - b.timestamp);
           setSoilMoistureValues(values)
           console.log(values)
         }
@@ -98,7 +98,7 @@ const LineChart = ({ title, values }) => {
         series={[
           {
             name: {title},
-            data: values.length > 0 ? values : new Array(24).fill(0),
+            data: values.map(obj => Number(obj.value.toFixed(2))),
           },
         ]}
         options= {{
@@ -136,7 +136,7 @@ const LineChart = ({ title, values }) => {
                 fontWeight: 400,
               },
             },
-            categories: ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"],
+            categories: convertTimestampsToTimeStrings(values.map(obj => obj.timestamp)),
           },
           yaxis: {
             labels: {

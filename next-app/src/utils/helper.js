@@ -39,3 +39,27 @@ export function getStartAndEndOfDay() {
     endOfDay: Math.floor(endOfDay.getTime() / 1000),
   };
 }
+
+export function getStartAndEndOfHour() {
+  const now = new Date();
+
+  // Get the start time one hour before the current time
+  const startOfHour = new Date(now.getTime() - (60 * 60 * 1000));
+
+  // Get the current time
+  const endOfHour = new Date(now);
+
+  return {
+    startOfHour: Math.floor(startOfHour.getTime() / 1000),
+    endOfHour: Math.floor(endOfHour.getTime() / 1000),
+  };
+}
+
+export function convertTimestampsToTimeStrings(timestamps) {
+  return timestamps.map(timestamp => {
+    const date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  });
+}
