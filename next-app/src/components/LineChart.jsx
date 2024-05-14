@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
   
    
   export default function LineChart({title, config=chartConfig, values}) {
-    cnosole.log(values)
+    config.series[0].data = values
     const chartConfig = {
       type: "line",
       height: 240,
