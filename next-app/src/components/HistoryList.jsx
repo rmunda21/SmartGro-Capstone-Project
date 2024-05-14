@@ -1,7 +1,7 @@
 'use client'
 
 import { APIEndpoint } from "@/utils/api";
-import { getStartAndEndOfWeek } from "@/utils/helper";
+import { getStartAndEndOfWeek, getStartAndEndOfDay } from "@/utils/helper";
 import { useEffect, useState } from "react";
 import { Card } from "flowbite-react";
 import dynamic from "next/dynamic";
@@ -10,6 +10,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const HistoryList = () => {
   const { startOfWeek, endOfWeek } = getStartAndEndOfWeek();
+  const { startOfDay, endOfDay } = getStartAndEndOfDay()
   const [humidityValues, setHumidityValues] = useState([])
 
   useEffect(() => {
@@ -18,12 +19,12 @@ const HistoryList = () => {
 
   const fetchHistory = () => {
     const historyAPI = new APIEndpoint();
-    historyAPI.get(`graph/${Number(1715490000)}/${Number(1716491200)}/Humidity`)
+    historyAPI.get(`graph/${startOfDay}/${endOfDay}/Humidity`)
       .then((res) => {
         if (res.data) {
           const values = res.data.map(obj => Number(obj.value.toFixed(2)));
-          setHumidityValues(values)
-          console.log(values);
+          setHumidityValues([10,20,30,40,50,60,70])
+          console.log(values)
         }
         
       })

@@ -24,3 +24,18 @@ export function getStartAndEndOfWeek() {
     endOfWeek: Math.floor(endOfWeek.getTime()/1000)
   };
 }
+
+export function getStartAndEndOfDay() {
+  const now = new Date();
+
+  // Get the start of the day
+  const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+
+  // Get the end of the day
+  const endOfDay = new Date(now.setHours(23, 59, 59, 999));
+
+  return {
+    startOfDay: Math.floor(startOfDay.getTime() / 1000),
+    endOfDay: Math.floor(endOfDay.getTime() / 1000),
+  };
+}
