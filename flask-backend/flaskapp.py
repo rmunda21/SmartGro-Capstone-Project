@@ -101,9 +101,7 @@ def get_user():
             # If session data is present then the user is authenticated
             if session_data:
                 
-                # print(session_data)
                 username = session_data['data']['username']
-             
                 user_data = get_user_data(username=username)
                 if user_data:   
                     return make_response({'message': 'success', 'data': user_data}, 200)
@@ -136,9 +134,9 @@ def get_crop():
             session_data = CustomSession.get_session(session_id)
             # If session data is present then the user is authenticated
             if session_data:
-                # crop_type = eval(session_data).get('croptype')
-                crop_type = session_data['data']["croptype"]
-                crop_data = get_crop_data(crop_type)
+                username = session_data['data']['username']
+                user_data = get_user_data(username=username)
+                crop_data = get_crop_data(user_data['croptype'])
                 if crop_data:   
                     return make_response({'message': 'success', 'data': crop_data}, 200)
                 else:
