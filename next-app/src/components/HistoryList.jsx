@@ -114,15 +114,12 @@ const HistoryList = () => {
           const t = res.data.map(obj => Number(obj.value.toFixed(2)));
           setHumidityValues(t);
 
-          setHumidityConfig(prevConfig => ({
-              ...prevConfig,
-              series: [
-                  {
-                      ...prevConfig.series[0],
-                      data: t
-                  }
-              ]
-          }));
+          setHumidityConfig(prevConfig => {
+            const newConfig = { ...prevConfig };
+            newConfig.series = [{ ...newConfig.series[0], data: t }];
+            return newConfig;
+        });
+          console.log(humidityConfig)
       }
 
       })
