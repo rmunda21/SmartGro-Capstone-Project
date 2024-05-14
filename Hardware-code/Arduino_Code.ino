@@ -1,7 +1,3 @@
-/*
-   Простой пример, демонстрирующий основные функции измерения температуры, давления и влажности
-*/
-
 #include <Wire.h>
 #include <WiFi.h>
 #include "time.h"
@@ -39,13 +35,19 @@ float temperature, pressure, Altitude, humidity, DHTTemp, H_Index;
 float target_temp, target_moisture, target_N, target_P, target_K;
 int light_intensity, moisture, moisture_perc;
 const int light_threshold = 800;
-const int WaterValue = 1100;  //Analogue reading when sensor is wet
-const int AirValue = 2700;    //Analogue Reading when sensor is dry
+// const int WaterValue = 4000;  //Analogue reading when sensor is wet
+// const int AirValue = 300;    //Analogue Reading when sensor is dry
+const int WaterValue = 3000;  //Analogue reading when sensor is wet
+const int AirValue = 3400;
 char* cooling_status;
 char* heating_status;
 char* pump_status;
 char* light_status;
+char* pump_override;
+char* auto_status;
+char* light_override;
 
+unsigned long previousTime = 0;
 
 int Raw;
 int voc_index;
@@ -148,7 +150,6 @@ void reconnect() {
       Serial.println("Connected to MQTT server");
       // if (client.connect(IDNumber)) {
       //   Serial.println("MQTT connected");
-
       // Subscribe
       client.subscribe(mqtt_SubTopic);
     } else {
@@ -162,24 +163,17 @@ void reconnect() {
 }
 
 void callback(char* topic, byte* message, unsigned int length) {
-
   char received[900] = { 0 };
-
   for (int i = 0; i < length; i++) {
     received[i] = (char)message[i];
   }
-
   // PRINT RECEIVED MESSAGE
   Serial.printf("Message received! \nTopic: %s \nPayload: %s\n", topic, received);
-
   DynamicJsonDocument doc(100);
-  // Serial.println("Testing....1...");
   deserializeJson(doc, received);
-  // Serial.println("Testing....2...");
   
-
   const char* type = doc["Type"];
-  // Serial.println("Testing....3...");
+
   if (strcmp(type, "CropData") == 0) {
 
     const char* cropname = doc["CropName"];
@@ -193,40 +187,43 @@ void callback(char* topic, byte* message, unsigned int length) {
     target_N = nitrogen;
     target_P = phosphorus;
     target_K = potassium;
+    Serial.print("Temp.....");
+    Serial.println(target_temp);
     // doc.clear();
-    // Serial.print("Crop Data: ");
-    // Serial.println(target_temp);
-    // Serial.print("SOil moisture: ");
-    // Serial.println(target_moisture);
-    // Serial.print("N: ");
-    // Serial.println(target_N);
-    // Serial.print("P: ");
-    // Serial.println(target_P);
-    // Serial.print("K: ");
-    // Serial.println(target_K);
   }
-
   if (strcmp(type, "SWITCH") == 0) {
-    // Serial.println("Testing..................");
-
     const char* Status = doc["status"];
     bool stat = doc["requested_state"];
-
-    if (Status == "PUMPSTATUS" && stat == true) {
-      Serial.println("Pump Running");
+    if (strcmp(Status, "PUMPSTATUS") == 0) {
+      if (stat) {
+        pump_override = "true";
+      } else {
+        pump_override = "false";
+      }
+      Serial.print("Override is: ");
+      Serial.println(pump_override);
     }
-    if (Status == "PUMPSTATUS" && stat == false) {
-      Serial.println("Pump OFF");
+    if (strcmp(Status, "AUTOSTATUS") == 0) {
+   if (stat) {
+        auto_status = "ON";
+      } else {
+        auto_status = "OFF";
+      }
     }
-
-    if (Status == "LIGHTSTATUS" && stat == true) {
-      Serial.println("Light ON");
+    
+    if (strcmp(Status, "LIGHTSTATUS") == 0) {
+      if (stat) {
+        light_override = "true";
+      } else {
+        light_override = "false";
+      }
+      Serial.print("Override is: ");
+      Serial.println(light_override);
     }
-    if (Status == "LIGHTSTATUS" && stat == false) {
-      Serial.println("Light OFF");
-    }
+    //  doc.clear();
   }
- 
+  // doc.clear();
+
 }
 
 
@@ -316,10 +313,10 @@ void lighting() {
   Serial.print("LDR = ");
   Serial.println(light_intensity);
   delay(500);
-  if (light_intensity < light_threshold) {
+  if ((light_intensity < light_threshold) || (light_override == "true")) {
     digitalWrite(light_pin, HIGH);
     light_status = "ON";
-  } else {
+  } else if ((light_intensity > light_threshold) || (light_override == "false")) {
     digitalWrite(light_pin, LOW);
     light_status = "OFF";
   }
@@ -327,24 +324,62 @@ void lighting() {
 
 void watering() {
   moisture = analogRead(moisture_pin);
-  moisture_perc = map(moisture, AirValue, WaterValue, 0, 100);
+  moisture_perc = map(moisture, AirValue, WaterValue, 100, 0);
+  Serial.print("Soil Moisture: ");
+  Serial.println(moisture);
 
-  // delay(500);
   if (moisture_perc < 0) {
     moisture_perc = 0;
-  }
-  if (moisture_perc > 100) {
+  } else if (moisture_perc > 100) {
     moisture_perc = 100;
   }
-  // Serial.print("Soil Moisture = ");
-  // Serial.println(moisture_perc);
-  if (moisture_perc < target_moisture) {
+
+  Serial.print("Soil Moisture = ");
+  Serial.println(moisture_perc);
+
+  Serial.print("PumpOveride = ");
+  Serial.println(pump_override);
+  Serial.print("Pump stat before = ");
+  Serial.println(pump_status);
+  if(auto_status == "ON")
+  {
+    if ((moisture_perc < target_moisture)) {
     digitalWrite(pump_pin, HIGH);
     pump_status = "ON";
-  } else {
+  } else if ((moisture_perc > target_moisture)) {
     digitalWrite(pump_pin, LOW);
     pump_status = "OFF";
   }
+
+  }
+
+  else
+  //  if (auto_status == "OFF")
+  {
+    if(pump_override == "true")
+    {
+      digitalWrite(pump_pin, HIGH);
+      pump_status = "ON";
+    }
+    if (pump_override == "false")
+  {
+     digitalWrite(pump_pin, LOW);
+    pump_status = "OFF";
+  }
+     
+  }
+
+  
+  
+  // if ((moisture_perc < target_moisture) || (pump_override == "true")) {
+  //   digitalWrite(pump_pin, HIGH);
+  //   pump_status = "ON";
+  // } else if ((moisture_perc > target_moisture) || (pump_override == "false")) {
+  //   digitalWrite(pump_pin, LOW);
+  //   pump_status = "OFF";
+  // }
+   Serial.print("Pump stat after = ");
+  Serial.println(pump_status);
 }
 
 void airquality() {
@@ -397,15 +432,17 @@ void transmit() {
   json["HEATINGSTATUS"] = heating_status;
   json["LIGHTSTATUS"] = light_status;
   json["PUMPSTATUS"] = pump_status;
-
+  json["AUTOSTATUS"] =   auto_status;
 
   serializeJson(json, message);
   json.clear();
 
   // Serial.println(message);
   // PUBLISH MESSAGE
-  if ((Timestamp >= 167701500) && (Timestamp > previousTimestamp)) {
-
+  unsigned long currentTime = millis();
+  if ((Timestamp >= 167701500) && (Timestamp > previousTimestamp) && (millis() - previousTime >= 5000)) {
+    previousTime = currentTime;
+    ;
     client.publish(mqtt_PubTopic, message);
   }
   previousTimestamp = Timestamp;
