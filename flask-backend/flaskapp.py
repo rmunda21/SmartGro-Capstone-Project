@@ -4,10 +4,9 @@ from dotenv import load_dotenv
 from flask import render_template, request, jsonify
 from flask import Flask, make_response, request
 from utils.db import connect_to_mongodb
-from utils.auth import register_user, authenticate_user
+from utils.auth import register_user, authenticate_user, get_user_data
 from utils.session import CustomSession
 from utils.crop import get_crop_data, update_user_crop_type
-
 # from config import Config
 from collections import defaultdict
 
@@ -101,7 +100,7 @@ def get_user():
             session_data = CustomSession.get_session(session_id)
             # If session data is present then the user is authenticated
             if session_data:
-                user_data = get_user(session_id)
+                user_data = get_user_data(session_id)
                 if user_data:   
                     return make_response({'message': 'success', 'data': user_data}, 200)
                 else:
@@ -126,14 +125,15 @@ def json_object():
     return render_template('404.html'), 404
 
 @app.route('/api/crop_data/', methods=['GET'])
-def get_crop_data():
+def get_crop():
     try:
         if 'session_id' in session:
             session_id = session['session_id']
             session_data = CustomSession.get_session(session_id)
             # If session data is present then the user is authenticated
             if session_data:
-                crop_type = eval(session_data).get('croptype')
+                # crop_type = eval(session_data).get('croptype')
+                crop_type = session_data['data']["croptype"]
                 crop_data = get_crop_data(crop_type)
                 if crop_data:   
                     return make_response({'message': 'success', 'data': crop_data}, 200)
@@ -154,7 +154,9 @@ def update_crop_data():
             if session_data:
                 form_data = request.form
                 print(form_data)
-                username = eval(session_data).get('username')
+                # username = eval(session_data).get('username')
+                username  = session_data["data"]['username']
+                print(username)
                 selected_crop = form_data['croptype']
                 quantity = form_data['quantity']
                 crop_data = update_user_crop_type(username=username, new_crop_type=selected_crop, quantity=quantity)

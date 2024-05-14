@@ -41,7 +41,7 @@ def authenticate_user(username: str, password: str):
         print(e)
         return None
 
-def get_user(session_id):
+def get_user_data(session_id):
     try:
         db = connect_to_mongodb()
         collection = db['SessionData']

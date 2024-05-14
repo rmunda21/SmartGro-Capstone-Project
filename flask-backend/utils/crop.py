@@ -4,7 +4,9 @@ def get_crop_data(cropname):
     try:
         db = connect_to_mongodb()
         collection = db['CropData']
-        crop_data = collection.find_one({cropname})
+        crop_data = collection.find_one({},{cropname})
+        crop_data.pop('_id')
+        print(crop_data)
         if crop_data:
             return crop_data
         return None
