@@ -130,14 +130,14 @@ const HomeList = () => {
                         <Card className={`w-[350px] flex-grow bg-cyan-50 border-cyan-100`}>
                             <h4 className="font-bold text-slate-600 text-sm">{'Humidity(%)'}</h4>
                             <div className="flex flex-row justify-between items-center">
-                                <p className="text-slate-500 text-3xl font-bold">{cropData ? cropData.humidity : "32"}</p>
+                                <p className="text-slate-500 text-3xl font-bold">{cropData ? Number(cropData.humidity.toFixed(2)) : "32"}</p>
                                 <img width={32} src='/images/humidity.png' alt="Humidity Icon" />
                             </div>
                         </Card>
                         <Card className={`w-[350px] flex-grow bg-yellow-50 border-yellow-100`}>
                             <h4 className="font-bold text-slate-600 text-sm">{'Temperature(°C)'}</h4>
                             <div className="flex flex-row justify-between items-center">
-                                <p className="text-slate-500 text-3xl font-bold">{cropData ? cropData.temperature : "32"}</p>
+                                <p className="text-slate-500 text-3xl font-bold">{cropData ? Number(cropData.temperature.toFixed(2)) : "32"}</p>
                                 <img width={32} src='/images/temperature.png' alt="Humidity Icon" />
                             </div>
                         </Card>
@@ -150,7 +150,7 @@ const HomeList = () => {
     return ( 
         <div className="w-full flex flex-col gap-5">
             <WelcomeUser firstname={userData?.firstname} isLoading={isLoading} />
-            <CropData isLoading={isLoading} />
+            <CropData isLoading={isLoading} cropType={userData?.croptype} quantity={userData?.quantity}/>
             <h1 className="text-lg font-bold text-gray-600">Recommendations for Crop</h1>
             <CropRecommendations cropData={cropRec} isLoading={isCropRecLoading} />
         </div>
