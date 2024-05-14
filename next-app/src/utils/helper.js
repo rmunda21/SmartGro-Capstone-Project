@@ -20,7 +20,7 @@ export function getStartAndEndOfWeek() {
   endOfWeek.setHours(23, 59, 59, 999);
 
   return {
-    startOfWeek: startOfWeek.getTime(),
-    endOfWeek: endOfWeek.getTime()
+    startOfWeek: Math.floor(startOfWeek.getTime()/1000),
+    endOfWeek: Math.floor(endOfWeek.getTime()/1000)
   };
 }

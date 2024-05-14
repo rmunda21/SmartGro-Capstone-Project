@@ -16,9 +16,9 @@ const HistoryList = () => {
 
     const fetchHistory = () =>{
       
-      console.log(startOfWeek, endOfWeek)
+      // console.log(startOfWeek, endOfWeek)
       const historyAPI = new APIEndpoint()
-      historyAPI.get(`/api/graph/${startOfWeek}/${endOfWeek}/Humidity`)
+      historyAPI.get(`graph/${startOfWeek}/${endOfWeek}/Humidity`)
       .then((res)=>{
         console.log(res)
       })
@@ -119,7 +119,7 @@ const HistoryList = () => {
     width: "100%",
     series: [
         {
-        name: "Air Pressure",
+        name: "Air Quality",
         data: [25, 30, 35],
         },
     ],
