@@ -23,7 +23,7 @@ const HistoryList = () => {
 
   const fetchHistory = () => {
     const historyAPI = new APIEndpoint();
-    historyAPI.get(`graph/${startOfHour}/${endOfHour}/Humidity`)
+      historyAPI.get(`graph/${startOfHour}/${endOfHour}/Humidity`)
       .then((res) => {
         if (res.data) {
           const values = res.data.sort((a, b) => a.timestamp - b.timestamp);

@@ -56,6 +56,7 @@ export function getStartAndEndOfHour() {
 }
 
 export function convertTimestampsToTimeStrings(timestamps) {
+  console.log(timestamps)
   return timestamps.map(timestamp => {
     const date = new Date(timestamp * 1000); // Convert from seconds to milliseconds
     const hours = String(date.getHours()).padStart(2, '0');
