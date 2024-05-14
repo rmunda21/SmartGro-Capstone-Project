@@ -8,7 +8,7 @@ import { Spinner } from "flowbite-react";
 
 const AuthRequired = ({children}) => {
 
-    const [verifying, setVerifying] = useState(true)
+    const [verifying, setVerifying] = useState(false)
     const router = useRouter()
     const verifyAPI = new APIEndpoint()
     verifyAPI.post('verify/')
@@ -16,7 +16,7 @@ const AuthRequired = ({children}) => {
         setVerifying(false)
     })
     .catch((err)=>{
-        router.push('/sign-in')
+        // router.push('/sign-in')
         console.log(err)
     })
 

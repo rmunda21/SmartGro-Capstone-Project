@@ -25,15 +25,11 @@ import {
   } from "@/components/ui/select"
 import { APIEndpoint } from "@/utils/api";
 import { useRouter } from "next/navigation";
+import { CROP_TYPES } from "@/utils/globals";
 
 const SignUpForm = () => {
 
-    const CROP_TYPES = ['Rice', 'Maize', 'Chickpea', 'Kidneybeans', 'Pigeonpeas',
-    'Mothbeans', 'Mungbean', 'Blackgram', 'Lentil', 'Pomegranate',
-    'Banana', 'Mango', 'Grapes', 'Watermelon', 'Muskmelon', 'Apple',
-    'Orange', 'Papaya', 'Coconut', 'Cotton', 'Jute', 'Coffee']
-
-    const router = useRouter()
+  const router = useRouter()
 
   const formSchema = z.object({
     firstname: z.string().min(1, {
