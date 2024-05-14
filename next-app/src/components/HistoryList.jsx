@@ -105,7 +105,7 @@ const LineChart = ({ title, values }) => {
         options= {{
           chart: {
             toolbar: {
-              show: false,
+              show: true,
             },
             zoom:{
               type: 'x',
