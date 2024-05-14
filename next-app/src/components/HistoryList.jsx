@@ -22,7 +22,7 @@ const HistoryList = () => {
       .then((res)=>{
         if (res.data){
           // time value
-          const t = res.data.map(obj => obj.value)
+          const t = res.data.map(obj => Number(obj.value.toFixed(2)))
           console.log(t)
           setHumidityValues(t)
         }
@@ -37,7 +37,7 @@ const HistoryList = () => {
         series: [
           {
             name: "Humidity",
-            data: humidityValues,
+            data: [10, 20],
           },
         ],
         options: {
