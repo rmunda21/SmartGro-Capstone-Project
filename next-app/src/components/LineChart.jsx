@@ -9,8 +9,7 @@ import dynamic from "next/dynamic";
    
   
    
-  export default function LineChart({title, config=chartConfig, values}) {
-    config.series[0].data = values
+  export default function LineChart({title, config=chartConfig}) {
     const chartConfig = {
       type: "line",
       height: 240,
@@ -18,7 +17,7 @@ import dynamic from "next/dynamic";
       series: [
         {
           name: "Temperature",
-          data: values,
+          data: [10,20,30,40,50],
         },
       ],
       options: {
