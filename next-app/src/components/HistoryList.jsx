@@ -96,7 +96,6 @@ const initialHumidityChartConfig = {
 const HistoryList = () => {
   const { startOfWeek, endOfWeek } = getStartAndEndOfWeek();
 
-  const [humidityValues, setHumidityValues] = useState([]);
   const [humidityConfig, setHumidityConfig] = useState(initialHumidityChartConfig);
 
   useEffect(() => {
@@ -109,7 +108,6 @@ const HistoryList = () => {
       .then((res) => {
         if (res.data) {
           const values = res.data.map(obj => Number(obj.value.toFixed(2)));
-          setHumidityValues(values);
 
           setHumidityConfig(prevConfig => ({
             ...prevConfig,
