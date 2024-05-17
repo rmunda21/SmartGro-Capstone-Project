@@ -87,7 +87,7 @@ def verify_session():
             # If session data is present then the user is authenticated
             if session_data:
                 return make_response({'message': 'success'}, 200)
-            return make_response({'message': 'invalid'}, 400)
+        return make_response({'message': 'invalid'}, 400)
     except Exception as e:
         print(e)
         return make_response({'message': 'error'}, 400)
